@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { navLinks } from "@/app/lib/data";
+import { navLinks, perahubNavLink } from "@/app/lib/data";
 import { useTheme } from "@/app/components/ThemeProvider";
 
 export default function Header() {
@@ -40,6 +40,12 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href={perahubNavLink.href}
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            {perahubNavLink.label}
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -101,6 +107,13 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href={perahubNavLink.href}
+              onClick={closeMobileMenu}
+              className="text-sm font-medium text-primary hover:text-primary/80 transition-colors py-2"
+            >
+              {perahubNavLink.label}
+            </Link>
           </div>
         </nav>
       )}

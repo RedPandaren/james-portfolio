@@ -43,6 +43,7 @@ export interface ProjectCard {
   readonly description: string;
   readonly techTags: readonly string[];
   readonly status: string;
+  readonly href?: string;
 }
 
 export interface EducationItem {

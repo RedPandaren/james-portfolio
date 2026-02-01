@@ -207,14 +207,16 @@ export const projects: readonly ProjectCard[] = [
     description:
       "Interactive visualization of Cloud KMS key management, HMAC/RSA signing flows, and payload encryption at rest and in transit.",
     techTags: ["Cloud KMS", "HMAC", "RSA", "Node.js"],
-    status: "Coming Soon",
+    status: "View Demo",
+    href: "/demos/encryption-visualizer",
   },
   {
     title: "Payment Flow Simulator",
     description:
-      "Step-through simulation of EMI migration transaction lifecycle — from legacy SOAP to modern REST with contract stability validation.",
-    techTags: ["REST", "SOAP", "State Machine", "Express.js"],
-    status: "Coming Soon",
+      "Step-through simulation of a 4-step remittance payment lifecycle — from legacy details inquiry to final payout confirmation.",
+    techTags: ["REST", "State Machine", "Express.js", "Nodemailer"],
+    status: "View Demo",
+    href: "/demos/payment-simulator",
   },
   {
     title: "API Security Tester",
@@ -239,3 +241,5 @@ export const navLinks: readonly NavLink[] = [
   { label: "Tech Stack", href: "#tech-stack" },
   { label: "Contact", href: "#contact" },
 ];
+
+export const perahubNavLink: NavLink = { label: "Perahub", href: "/perahub" };
