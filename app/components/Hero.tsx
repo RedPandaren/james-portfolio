@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="min-h-[90vh] flex items-center pt-40 pb-32 px-8">
+    <section className="min-h-[90vh] flex items-center pt-32 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-8">
       <div className="max-w-5xl mx-auto w-full hero-animate flex flex-col gap-8">
         {/* Name */}
         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tightest leading-none text-text-primary">

@@ -3,11 +3,11 @@
 import { useState, useReducer, useEffect } from "react";
 import Link from "next/link";
 
-type Phase = "INQUIRY" | "STAGING" | "OTP" | "CONFIRMATION";
+type Phase = "INQUIRY" | "STAGING" | "OTP" | "CONFIRMATION" | "CIRCUIT_BREAK" | "RECOVERY";
 
 type TransactionState = {
   phase: Phase;
-  logs: { msg: string; type: "info" | "success" | "error"; time: string }[];
+  logs: { msg: string; type: "info" | "success" | "error" | "warn"; time: string }[];
   formData: {
     refNumber: string;
     firstName: string;
@@ -16,10 +16,30 @@ type TransactionState = {
   otp: string;
   isProcessing: boolean;
   showEmailToast: boolean;
+  circuitBreakReason?: string;
+  retryCount: number;
+  lastAttemptTime: number;
 };
 
 const MAGIC_REF = "REMIT-2024-JFC";
 const MAGIC_OTP = "123456";
+
+// Sample Filipino customer database for validation
+const SAMPLE_CUSTOMERS = [
+  { refNumber: "REF-001", firstName: "Juan", lastName: "Santos", amount: 5000 },
+  { refNumber: "REF-002", firstName: "Maria", lastName: "Reyes", amount: 15000 },
+  { refNumber: "REF-003", firstName: "Jose", lastName: "Cruz", amount: 7500 },
+  { refNumber: "REF-004", firstName: "Ana", lastName: "Garcia", amount: 12000 },
+  { refNumber: "REF-005", firstName: "Miguel", lastName: "Fernandez", amount: 8000 },
+];
+
+// Circuit breaker state
+let circuitBreakerOpen = false;
+let circuitBreakerTimer: NodeJS.Timeout | null = null;
+let circuitBreakerStartTime = 0;
+let failedAttempts = 0;
+const CIRCUIT_BREAKER_THRESHOLD = 3;
+const CIRCUIT_BREAKER_TIMEOUT = 30000; // 30 seconds
 
 const initialState: TransactionState = {
   phase: "INQUIRY",
@@ -28,14 +48,18 @@ const initialState: TransactionState = {
   otp: "",
   isProcessing: false,
   showEmailToast: false,
+  retryCount: 0,
+  lastAttemptTime: Date.now(),
 };
 
 type Action =
   | { type: "SET_PHASE"; payload: Phase }
-  | { type: "ADD_LOG"; msg: string; logType?: "info" | "success" | "error" }
+  | { type: "ADD_LOG"; msg: string; logType?: "info" | "success" | "error" | "warn" }
   | { type: "UPDATE_FORM"; field: string; value: string }
   | { type: "SET_PROCESSING"; payload: boolean }
   | { type: "SHOW_EMAIL_TOAST"; payload: boolean }
+  | { type: "SET_CIRCUIT_BREAK"; reason: string }
+  | { type: "INCREMENT_RETRY" }
   | { type: "RESET" };
 
 function reducer(state: TransactionState, action: Action): TransactionState {
@@ -56,8 +80,21 @@ function reducer(state: TransactionState, action: Action): TransactionState {
       return { ...state, isProcessing: action.payload };
     case "SHOW_EMAIL_TOAST":
       return { ...state, showEmailToast: action.payload };
+    case "SET_CIRCUIT_BREAK":
+      return { 
+        ...state, 
+        phase: "CIRCUIT_BREAK", 
+        circuitBreakReason: action.reason,
+        isProcessing: false 
+      };
+    case "INCREMENT_RETRY":
+      return {
+        ...state,
+        retryCount: state.retryCount + 1,
+        lastAttemptTime: Date.now()
+      };
     case "RESET":
-      return initialState;
+      return { ...initialState };
     default:
       return state;
   }
@@ -71,24 +108,156 @@ export default function PaymentFlowSimulator() {
     dispatch({ type: "ADD_LOG", msg, logType });
   };
 
+  const checkCircuitBreaker = () => {
+    if (circuitBreakerOpen) {
+      const timeSinceOpen = Date.now() - circuitBreakerStartTime;
+      if (timeSinceOpen > CIRCUIT_BREAKER_TIMEOUT) {
+        circuitBreakerOpen = false;
+        failedAttempts = 0;
+        if (circuitBreakerTimer) {
+          clearTimeout(circuitBreakerTimer);
+          circuitBreakerTimer = null;
+        }
+      } else {
+        return false; // Circuit breaker is still open
+      }
+    }
+    return true;
+  };
+
+  const triggerCircuitBreaker = (reason: string) => {
+    failedAttempts++;
+    if (failedAttempts >= CIRCUIT_BREAKER_THRESHOLD) {
+      circuitBreakerOpen = true;
+      circuitBreakerStartTime = Date.now();
+      circuitBreakerTimer = setTimeout(() => {
+        circuitBreakerOpen = false;
+        failedAttempts = 0;
+        circuitBreakerTimer = null;
+      }, CIRCUIT_BREAKER_TIMEOUT);
+      dispatch({ type: "SET_CIRCUIT_BREAK", reason });
+      return true;
+    }
+    return false;
+  };
+
+  const validateCustomer = (refNumber: string, firstName: string, lastName: string) => {
+    // Check if it's magic reference
+    if (refNumber.toUpperCase() === MAGIC_REF) {
+      return { 
+        valid: true, 
+        customer: { firstName: "James Florence", lastName: "Conales", amount: 25000 },
+        source: "legacy" 
+      };
+    }
+    
+    // Check against Filipino customer database
+    const customer = SAMPLE_CUSTOMERS.find(c => 
+      c.refNumber === refNumber.toUpperCase() &&
+      c.firstName.toLowerCase() === firstName.toLowerCase() &&
+      c.lastName.toLowerCase() === lastName.toLowerCase()
+    );
+    
+    if (customer) {
+      return { valid: true, customer, source: "database" };
+    }
+    
+    // Check for partial matches (name validation failure scenario)
+    const partialMatch = SAMPLE_CUSTOMERS.find(c => c.refNumber === refNumber.toUpperCase());
+    if (partialMatch) {
+      if (partialMatch.firstName.toLowerCase() !== firstName.toLowerCase() || 
+          partialMatch.lastName.toLowerCase() !== lastName.toLowerCase()) {
+        return { valid: false, error: "NAME_MISMATCH", customer: partialMatch, source: "database" };
+      }
+    }
+    
+    return { valid: false, error: "NOT_FOUND", source: "none", customer: undefined };
+  };
+
+  const simulateNetworkError = () => {
+    return Math.random() < 0.1; // 10% chance of network error
+  };
+
+  const simulateRateLimit = () => {
+    const timeSinceLastAttempt = Date.now() - state.lastAttemptTime;
+    return timeSinceLastAttempt < 5000 && state.retryCount >= 2; // Rate limit if <5s between attempts
+  };
+
   const handleInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check circuit breaker first
+    if (!checkCircuitBreaker()) {
+      dispatch({ type: "SET_CIRCUIT_BREAK", reason: "Circuit breaker is active. Too many failed attempts." });
+      return;
+    }
+    
+    // Check rate limiting
+    if (simulateRateLimit()) {
+      addLog("Rate limit exceeded. Please wait before trying again.", "error");
+      dispatch({ type: "SET_PROCESSING", payload: false });
+      triggerCircuitBreaker("Rate limiting triggered");
+      return;
+    }
+    
     dispatch({ type: "SET_PROCESSING", payload: true });
+    dispatch({ type: "INCREMENT_RETRY" });
     addLog("Initiating Inquiry for Reference: " + state.formData.refNumber);
     
-    // Simulate API delay
+    // Simulate network errors
+    if (simulateNetworkError()) {
+      await new Promise((r) => setTimeout(r, 1000));
+      addLog("Network timeout. Service unavailable.", "error");
+      dispatch({ type: "SET_PROCESSING", payload: false });
+      if (triggerCircuitBreaker("Network errors detected")) {
+        return;
+      }
+      return;
+    }
+    
     await new Promise((r) => setTimeout(r, 1000));
     addLog("Calling KaiserCheck / CIS Fraud Detection middleware...");
     
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 800));
+    addLog("Validating customer credentials...");
     
-    if (state.formData.refNumber.toUpperCase() === MAGIC_REF) {
-      addLog("Recipient Matched: James Florence Conales", "success");
-      addLog("Amount Verified: PHP 25,000.00", "success");
-      dispatch({ type: "SET_PHASE", payload: "STAGING" });
+    // Validate customer details
+    const validation = validateCustomer(
+      state.formData.refNumber,
+      state.formData.firstName,
+      state.formData.lastName
+    );
+    
+    await new Promise((r) => setTimeout(r, 700));
+    
+    if (validation.valid) {
+      const customer = validation.customer;
+      if (customer) {
+        addLog(`Recipient Matched: ${customer.firstName} ${customer.lastName} (${validation.source})`, "success");
+        addLog(`Amount Verified: PHP ${customer.amount.toLocaleString()}.00`, "success");
+        addLog("Risk Assessment: LOW - Transaction approved", "success");
+        dispatch({ type: "SET_PHASE", payload: "STAGING" });
+        failedAttempts = 0; // Reset failed attempts on success
+      }
+    } else if (validation.error === "NAME_MISMATCH") {
+      const customer = validation.customer;
+      if (customer) {
+        addLog(`403 FORBIDDEN: Identity validation failed`, "error");
+        addLog(`Expected: ${customer.firstName} ${customer.lastName}`, "warn" as any);
+        addLog(`Provided: ${state.formData.firstName} ${state.formData.lastName}`, "warn" as any);
+        addLog("SECURITY ALERT: Name mismatch detected. Access denied.", "error");
+      }
+      dispatch({ type: "SET_PROCESSING", payload: false });
+      if (triggerCircuitBreaker("Identity validation failures")) {
+        return;
+      }
     } else {
+      addLog("400 BAD_REQUEST: Invalid reference number format", "error");
       addLog("Reference Number not found or details mismatch.", "error");
       dispatch({ type: "SET_PROCESSING", payload: false });
+      if (triggerCircuitBreaker("Invalid reference attempts")) {
+        return;
+      }
     }
   };
 
@@ -161,6 +330,7 @@ export default function PaymentFlowSimulator() {
               <div key={i} className={`p-2 rounded border-l-2 ${
                 log.type === 'error' ? 'bg-red-500/5 border-red-500 text-red-400' :
                 log.type === 'success' ? 'bg-green-500/5 border-green-500 text-green-400' :
+                log.type === 'warn' ? 'bg-yellow-500/5 border-yellow-500 text-yellow-400' :
                 'bg-primary/5 border-primary text-text-secondary'
               }`}>
                 <span className="opacity-50">[{log.time}]</span> {log.msg}
@@ -189,17 +359,23 @@ export default function PaymentFlowSimulator() {
             {["Inquiry", "Stage", "OTP", "Done"].map((s, i) => {
               const phases: Phase[] = ["INQUIRY", "STAGING", "OTP", "CONFIRMATION"];
               const currentIndex = phases.indexOf(state.phase);
-              const isActive = i <= currentIndex;
+              const isActive = i <= currentIndex && state.phase !== "CIRCUIT_BREAK";
               return (
                 <div key={s} className="flex flex-col items-center gap-2 flex-1 relative">
                   <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold z-10 transition-colors duration-500 ${
-                    isActive ? "bg-primary border-primary text-text-inverse" : "bg-surface border-border-strong text-text-muted"
+                    isActive ? "bg-primary border-primary text-text-inverse" : 
+                    state.phase === "CIRCUIT_BREAK" ? "bg-red-500/20 border-red-500 text-red-500" :
+                    "bg-surface border-border-strong text-text-muted"
                   }`}>
-                    {i + 1}
+                    {state.phase === "CIRCUIT_BREAK" && i === 1 ? "!" : i + 1}
                   </div>
-                  <span className={`text-[10px] uppercase tracking-tighter font-bold ${isActive ? "text-primary" : "text-text-muted"}`}>{s}</span>
+                  <span className={`text-[10px] uppercase tracking-tighter font-bold ${isActive ? "text-primary" : state.phase === "CIRCUIT_BREAK" ? "text-red-500" : "text-text-muted"}`}>
+                    {state.phase === "CIRCUIT_BREAK" && i === 1 ? "Error" : s}
+                  </span>
                   {i < 3 && (
-                    <div className="absolute top-4 left-[50%] right-[-50%] h-[1px] bg-border-strong -z-0" />
+                    <div className={`absolute top-4 left-[50%] right-[-50%] h-[1px] -z-0 ${
+                      state.phase === "CIRCUIT_BREAK" && i < 2 ? "bg-red-500" : "bg-border-strong"
+                    }`} />
                   )}
                 </div>
               );
@@ -221,8 +397,29 @@ export default function PaymentFlowSimulator() {
                     </svg>
                     Simulation Helper:
                   </p>
-                  <p className="text-sm text-text-primary mt-1">
-                    Use Ref #: <button type="button" onClick={() => dispatch({ type: "UPDATE_FORM", field: "refNumber", value: MAGIC_REF })} className="font-mono font-bold underline decoration-dotted">{MAGIC_REF}</button>
+                  <p className="text-sm text-text-primary mt-1 mb-3">
+                    <strong>Valid References:</strong>
+                  </p>
+                  <div className="space-y-2">
+                    <button type="button" onClick={() => {
+                      dispatch({ type: "UPDATE_FORM", field: "refNumber", value: MAGIC_REF });
+                      dispatch({ type: "UPDATE_FORM", field: "firstName", value: "James Florence" });
+                      dispatch({ type: "UPDATE_FORM", field: "lastName", value: "Conales" });
+                    }} className="w-full text-left font-mono text-xs bg-white dark:bg-zinc-800 p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
+                      {MAGIC_REF} → James Florence Conales
+                    </button>
+                    {SAMPLE_CUSTOMERS.map((customer) => (
+                      <button key={customer.refNumber} type="button" onClick={() => {
+                        dispatch({ type: "UPDATE_FORM", field: "refNumber", value: customer.refNumber });
+                        dispatch({ type: "UPDATE_FORM", field: "firstName", value: customer.firstName });
+                        dispatch({ type: "UPDATE_FORM", field: "lastName", value: customer.lastName });
+                      }} className="w-full text-left font-mono text-xs bg-white dark:bg-zinc-800 p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
+                        {customer.refNumber} → {customer.firstName} {customer.lastName}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-text-muted mt-3">
+                    <strong>Try name mismatch:</strong> Use correct ref but wrong names to trigger security alerts.
                   </p>
                 </div>
 
@@ -244,6 +441,8 @@ export default function PaymentFlowSimulator() {
                     <input
                       required
                       type="text"
+                      value={state.formData.firstName}
+                      onChange={(e) => dispatch({ type: "UPDATE_FORM", field: "firstName", value: e.target.value })}
                       className="w-full bg-surface-secondary/50 border border-border-strong rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       placeholder="James Florence"
                     />
@@ -253,6 +452,8 @@ export default function PaymentFlowSimulator() {
                     <input
                       required
                       type="text"
+                      value={state.formData.lastName}
+                      onChange={(e) => dispatch({ type: "UPDATE_FORM", field: "lastName", value: e.target.value })}
                       className="w-full bg-surface-secondary/50 border border-border-strong rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       placeholder="Conales"
                     />
@@ -420,6 +621,64 @@ export default function PaymentFlowSimulator() {
                 >
                   Back to Case Study
                 </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Circuit Break Phase */}
+          {state.phase === "CIRCUIT_BREAK" && (
+            <div className="flex-1 animate-in fade-in slide-in-from-top-4 duration-500 flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-6">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-red-500 mb-2">Circuit Breaker Active</h2>
+              <p className="text-sm text-text-secondary mb-8 text-center px-8">
+                Security systems have detected unusual activity. The service is temporarily disabled for protection.
+              </p>
+
+              <div className="w-full bg-red-500/5 border border-red-500/20 rounded-xl p-6 mb-8">
+                <h3 className="text-sm font-bold text-red-500 mb-4">Security Details</h3>
+                <div className="space-y-3 font-mono text-xs text-text-secondary">
+                  <div className="flex justify-between">
+                    <span>Reason:</span>
+                    <span className="text-red-500">{state.circuitBreakReason || "Unknown"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Failed Attempts:</span>
+                    <span className="text-red-500">{failedAttempts}/{CIRCUIT_BREAKER_THRESHOLD}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Recovery Time:</span>
+                    <span className="text-red-500">{Math.ceil(CIRCUIT_BREAKER_TIMEOUT/1000)}s</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className="text-red-500 font-bold">CIRCUIT OPEN</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-surface-secondary/50 border border-border-strong rounded-xl p-4 mb-8 max-w-sm text-center">
+                <p className="text-xs text-text-muted">
+                  <strong>This simulates production security behavior:</strong> Circuit breakers protect against brute force attacks, rate limiting abuse, and system overload.
+                </p>
+              </div>
+
+              <div className="mt-8 flex gap-4 w-full">
+                <button
+                  onClick={() => dispatch({ type: "RESET" })}
+                  className="flex-1 bg-text-primary text-text-inverse h-12 rounded-xl font-bold hover:opacity-90 transition-all"
+                >
+                  Start New Session
+                </button>
+                <button
+                  onClick={handleInquiry}
+                  className="flex-1 border border-border-strong flex items-center justify-center h-12 rounded-xl font-bold text-text-secondary hover:bg-surface-secondary transition-all"
+                >
+                  Try Recovery
+                </button>
               </div>
             </div>
           )}

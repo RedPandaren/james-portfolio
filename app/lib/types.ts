@@ -54,3 +54,23 @@ export interface EducationItem {
   readonly duration: { readonly start: number; readonly end: number };
   readonly honors: string;
 }
+
+export type RateLimitStrategy = 'token-bucket' | 'fixed-window' | 'sliding-window';
+
+export type TrafficPattern = 'normal' | 'burst' | 'ddos' | 'spike';
+
+export type RequestStatus = 'pending' | 'allowed' | 'blocked' | 'processing';
+
+export interface SimulatedRequest {
+  id: string;
+  timestamp: number;
+  status: RequestStatus;
+  clientId: string;
+  responseTime?: number;
+  headers?: {
+    'X-RateLimit-Limit': number;
+    'X-RateLimit-Remaining': number;
+    'X-RateLimit-Reset': number;
+    'Retry-After'?: number;
+  };
+}

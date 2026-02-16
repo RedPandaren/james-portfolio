@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import ScrollReveal from "@/app/components/ScrollReveal";
 import Footer from "@/app/components/Footer";
 
@@ -215,10 +218,85 @@ const techStack = [
 ];
 
 export default function PerahubPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <main className="min-h-screen bg-surface">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-border-subtle px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
+        <Link href="/#projects" className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors text-sm font-medium">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span className="hidden sm:inline">Back to Projects</span>
+          <span className="sm:hidden">Back</span>
+        </Link>
+        
+        <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-text-muted hidden sm:block">Case Study</span>
+        
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="sm:hidden p-2 rounded-lg border border-border-subtle hover:border-primary transition-colors"
+          aria-label="Toggle menu"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {isMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-40 sm:hidden">
+          <div className="absolute inset-0 bg-surface/95 backdrop-blur-md pt-20 px-4 pb-8">
+            <div className="flex flex-col gap-4">
+              <Link
+                href="/#about"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium text-text-primary py-3 border-b border-border-subtle"
+              >
+                About
+              </Link>
+              <Link
+                href="/#impact"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium text-text-primary py-3 border-b border-border-subtle"
+              >
+                Impact
+              </Link>
+              <Link
+                href="/#experience"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium text-text-primary py-3 border-b border-border-subtle"
+              >
+                Experience
+              </Link>
+              <Link
+                href="/#projects"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium text-text-primary py-3 border-b border-border-subtle"
+              >
+                Projects
+              </Link>
+              <Link
+                href="/#contact"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium text-primary py-3"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
-      <section className="min-h-[70vh] flex items-center pt-32 pb-20 px-8">
+      <section className="min-h-[70vh] flex items-center pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-8">
         <div className="max-w-5xl mx-auto w-full">
           <ScrollReveal>
             <div className="flex flex-col gap-6">
@@ -268,16 +346,16 @@ export default function PerahubPage() {
               </div>
 
               {/* Metrics Banner */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-12 border-t border-border-subtle/30">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8 sm:mt-12 pt-8 sm:pt-12 border-t border-border-subtle/30">
                 {metrics.map((metric) => (
                   <div key={metric.label}>
-                    <p className="text-3xl font-bold text-text-primary tracking-tight">
+                    <p className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
                       {metric.value}
                     </p>
-                    <p className="text-xs font-medium text-primary uppercase tracking-wider mt-1">
+                    <p className="text-[10px] sm:text-xs font-medium text-primary uppercase tracking-wider mt-1">
                       {metric.label}
                     </p>
-                    <p className="text-[10px] text-text-muted mt-0.5">
+                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">
                       {metric.subtext}
                     </p>
                   </div>
@@ -345,7 +423,7 @@ export default function PerahubPage() {
       </section>
 
       {/* Mobile Experience Section */}
-      <section className="py-24 px-8 border-t border-border-subtle/50 bg-surface-secondary/30">
+      <section className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50 bg-surface-secondary/30">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-16">
@@ -358,11 +436,11 @@ export default function PerahubPage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
             {screenshots.map((shot) => (
               <ScrollReveal key={shot.src} stagger>
                 <div className="group flex flex-col items-center">
-                  <div className="relative aspect-[9/19] w-full max-w-[280px] rounded-[32px] overflow-hidden border-8 border-text-primary/5 shadow-2xl group-hover:shadow-primary/20 transition-all duration-500">
+                  <div className="relative aspect-[9/16] sm:aspect-[9/19] w-full max-w-[200px] sm:max-w-[280px] rounded-[24px] sm:rounded-[32px] overflow-hidden border-4 sm:border-8 border-text-primary/5 shadow-2xl group-hover:shadow-primary/20 transition-all duration-500">
                     <Image
                       src={shot.src}
                       alt={shot.title}
@@ -371,8 +449,8 @@ export default function PerahubPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <div className="mt-8 text-center px-4">
-                    <h3 className="text-lg font-semibold text-text-primary mb-2">{shot.title}</h3>
+                  <div className="mt-6 sm:mt-8 text-center px-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary mb-2">{shot.title}</h3>
                   </div>
                 </div>
               </ScrollReveal>
@@ -382,7 +460,7 @@ export default function PerahubPage() {
       </section>
 
       {/* Features Section - Phase 3 */}
-      <section id="features" className="py-24 px-8 border-t border-border-subtle/50 bg-border-subtle/20">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50 bg-border-subtle/20">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-16">
@@ -506,7 +584,7 @@ export default function PerahubPage() {
       </section>
 
       {/* Tech Stack Section - Phase 4 */}
-      <section id="tech-stack" className="py-24 px-8 border-t border-border-subtle/50 bg-border-subtle/20">
+      <section id="tech-stack" className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50 bg-border-subtle/20">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-16">
@@ -604,7 +682,7 @@ export default function PerahubPage() {
                     policies, and RBAC to meet financial services security compliance requirements.
                   </p>
                 </div>
-                <div className="flex wrap gap-3">
+                <div className="flex flex-wrap gap-3">
                   <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-3 py-1 rounded-full">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -625,27 +703,27 @@ export default function PerahubPage() {
       </section>
 
       {/* Architecture Overview Section */}
-      <section className="py-24 px-8 border-t border-border-subtle/50">
+      <section className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal>
-            <div className="text-center mb-16">
-              <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+            <div className="text-center mb-12 sm:mb-16">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4">
                 Architecture Overview
               </h1>
-              <p className="text-text-secondary max-w-2xl mx-auto">
+              <p className="text-text-secondary max-w-2xl mx-auto text-sm sm:text-base">
                 Enterprise-grade architecture built on GCP, optimized for security, reliability, and high-throughput financial processing.
               </p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {architectureLayers.map((layer, index) => (
               <ScrollReveal key={layer.title} stagger={true}>
-                <div className="relative group p-6 rounded-2xl border border-border-subtle bg-surface-secondary/20 hover:border-primary/30 transition-colors h-full">
+                <div className="relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-border-subtle bg-surface-secondary/20 hover:border-primary/30 transition-colors h-full">
                   <div className="absolute -top-3 left-6 px-2 bg-surface text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
                     Layer {index + 1}
                   </div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2 pt-2">{layer.title}</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-text-primary mb-2 pt-2">{layer.title}</h3>
                   <p className="text-xs text-text-muted mb-4 leading-relaxed">{layer.description}</p>
                   <ul className="space-y-2">
                     {layer.items.map((item) => (
@@ -660,21 +738,21 @@ export default function PerahubPage() {
             ))}
           </div>
 
-          <div className="mt-12 p-8 rounded-2xl bg-primary/5 border border-primary/10 flex flex-col md:flex-row items-center gap-8">
+          <div className="mt-8 sm:mt-12 p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-primary/5 border border-primary/10 flex flex-col md:flex-row items-center gap-4 sm:gap-8">
             <div className="flex-1 text-center md:text-left">
               <h4 className="font-semibold text-text-primary mb-2">High Availability Design</h4>
-              <p className="text-sm text-text-secondary">
+              <p className="text-xs sm:text-sm text-text-secondary">
                 Leveraging Google Cloud Run's multi-region failover and auto-scaling to ensure 99.9% uptime 
                 during peak transaction windows like paydays and holidays.
               </p>
             </div>
             <div className="flex gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">0</div>
+                <div className="text-xl sm:text-2xl font-bold text-primary">0</div>
                 <div className="text-[10px] text-text-muted uppercase tracking-wider font-medium">Data Loss Incidents</div>
               </div>
               <div className="text-center border-l border-border-subtle pl-4">
-                <div className="text-2xl font-bold text-primary">{"<"}250ms</div>
+                <div className="text-xl sm:text-2xl font-bold text-primary">{"<"}250ms</div>
                 <div className="text-[10px] text-text-muted uppercase tracking-wider font-medium">Avg API Latency</div>
               </div>
             </div>
@@ -683,7 +761,7 @@ export default function PerahubPage() {
       </section>
 
       {/* User Journey Section */}
-      <section className="py-24 px-8 border-t border-border-subtle/50 bg-border-subtle/10">
+      <section className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50 bg-border-subtle/10">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-16">

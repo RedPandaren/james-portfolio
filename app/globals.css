@@ -303,3 +303,10 @@
 .hero-animate > *:nth-child(4) {
   animation: fade-in-up 0.7s var(--ease-entrance) 0.55s forwards;
 }
+
+/* Mermaid diagram dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid-diagram {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}

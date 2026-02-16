@@ -223,23 +223,86 @@ export const projects: readonly ProjectCard[] = [
     description:
       "Live demonstration of request signing, payload encryption, and secure API layer patterns used in production fintech systems.",
     techTags: ["HMAC", "Encryption", "IAM", "OAuth2"],
-    status: "Coming Soon",
+    status: "View Demo",
+    href: "/demos/api-security-tester",
   },
   {
-    title: "System Architecture Explorer",
+    title: "Rate Limiting Simulator",
     description:
-      "Interactive microservices architecture diagram showing data flow, service boundaries, and cloud infrastructure topology.",
-    techTags: ["Microservices", "GCP", "Docker", "CI/CD"],
-    status: "Coming Soon",
+      "Interactive comparison of Token Bucket, Fixed Window, and Sliding Window algorithms with live traffic simulation and real-time metrics.",
+    techTags: ["Token Bucket", "Express.js", "API Gateway", "DDoS Protection"],
+    status: "View Demo",
+    href: "/demos/rate-limiter",
   },
 ];
 
 export const navLinks: readonly NavLink[] = [
   { label: "About", href: "#about" },
+  { label: "Impact", href: "#impact" },
   { label: "Experience", href: "#experience" },
   { label: "Projects", href: "#projects" },
+  { label: "Architecture", href: "#architecture" },
   { label: "Tech Stack", href: "#tech-stack" },
   { label: "Contact", href: "#contact" },
 ];
 
 export const perahubNavLink: NavLink = { label: "Perahub", href: "/perahub" };
+
+export const metrics = {
+  reliability: {
+    title: "Service Reliability",
+    value: "99.9%",
+    unit: "uptime",
+    trend: "up" as const,
+    description: "PERAHUB Mobile App backend service availability",
+    icon: "📊",
+    visualization: "gauge" as const,
+  },
+  efficiency: {
+    title: "Onboarding Efficiency",
+    value: "30%",
+    unit: "reduction",
+    trend: "up" as const,
+    description: "Time saved on payment integrations",
+    icon: "⚡",
+    visualization: "comparison" as const,
+  },
+  ownership: {
+    title: "Backend Ownership",
+    value: "90%",
+    unit: "coverage",
+    trend: "neutral" as const,
+    description: "PERAHUB Mobile ecosystem ownership",
+    icon: "🏗️",
+    visualization: "pie" as const,
+  },
+  migration: {
+    title: "Migration Success",
+    value: "100%",
+    unit: "stability",
+    trend: "up" as const,
+    description: "Contract stability during EMI migration",
+    icon: "🔄",
+    visualization: "timeline" as const,
+  },
+  modernization: {
+    title: "Systems Modernized",
+    value: "10+",
+    unit: "systems",
+    trend: "up" as const,
+    description: "Laravel to Node.js transformations",
+    icon: "🚀",
+    visualization: "counter" as const,
+  },
+  security: {
+    title: "Security Standardization",
+    value: "KMS",
+    unit: "encryption",
+    trend: "up" as const,
+    description: "Google Cloud KMS implementation",
+    icon: "🔒",
+    visualization: "badge" as const,
+  },
+};
+
+

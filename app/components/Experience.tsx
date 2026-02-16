@@ -5,14 +5,14 @@ export default function Experience() {
   const exp = experience[0];
 
   return (
-    <section id="experience" className="py-32 lg:py-48 px-8">
+    <section id="experience" className="py-20 sm:py-32 lg:py-48 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
         <ScrollReveal>
           <p className="text-sm uppercase tracking-wider text-text-muted mb-4">
             Experience
           </p>
-          <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-text-primary mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter text-text-primary mb-12 sm:mb-16">
             Where I&apos;ve Built
           </h2>
         </ScrollReveal>
@@ -36,16 +36,16 @@ export default function Experience() {
 
         {/* Responsibilities Grid */}
         <ScrollReveal stagger>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
             {exp.keyResponsibilities.map((responsibility, index) => (
               <div
                 key={index}
-                className="border border-border-subtle rounded-xl p-6 hover:border-border-strong transition-colors duration-200"
+                className="border border-border-subtle rounded-xl p-4 sm:p-6 hover:border-border-strong transition-colors duration-200"
               >
                 <h4 className="font-semibold text-text-primary mb-2">
                   {responsibility.area}
                 </h4>
-                <p className="text-sm text-text-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
                   {responsibility.details}
                 </p>
               </div>
