@@ -7,6 +7,9 @@ import type {
   NavLink,
   ProjectCard,
   EducationItem,
+  ProofPath,
+  EvidenceCard,
+  ContactIntent,
 } from "./types";
 
 export const personalInfo: PersonalInfo = {
@@ -21,6 +24,8 @@ export const personalInfo: PersonalInfo = {
 
 export const professionalSummary: ProfessionalSummary = {
   headline: "Fintech-specialized Backend Engineer",
+  valueProposition:
+    "I help fintech teams ship secure payment systems faster by modernizing legacy platforms without breaking partner contracts.",
   focus: [
     "High-stakes payment infrastructure",
     "Secure cloud architecture",
@@ -208,6 +213,7 @@ export const projects: readonly ProjectCard[] = [
       "Interactive visualization of Cloud KMS key management, HMAC/RSA signing flows, and payload encryption at rest and in transit.",
     techTags: ["Cloud KMS", "HMAC", "RSA", "Node.js"],
     status: "View Demo",
+    proofCategory: "security",
     href: "/demos/encryption-visualizer",
   },
   {
@@ -216,6 +222,7 @@ export const projects: readonly ProjectCard[] = [
       "Step-through simulation of a 4-step remittance payment lifecycle — from legacy details inquiry to final payout confirmation.",
     techTags: ["REST", "State Machine", "Express.js", "Nodemailer"],
     status: "View Demo",
+    proofCategory: "ownership",
     href: "/demos/payment-simulator",
   },
   {
@@ -224,6 +231,7 @@ export const projects: readonly ProjectCard[] = [
       "Live demonstration of request signing, payload encryption, and secure API layer patterns used in production fintech systems.",
     techTags: ["HMAC", "Encryption", "IAM", "OAuth2"],
     status: "View Demo",
+    proofCategory: "security",
     href: "/demos/api-security-tester",
   },
   {
@@ -232,7 +240,83 @@ export const projects: readonly ProjectCard[] = [
       "Interactive comparison of Token Bucket, Fixed Window, and Sliding Window algorithms with live traffic simulation and real-time metrics.",
     techTags: ["Token Bucket", "Express.js", "API Gateway", "DDoS Protection"],
     status: "View Demo",
+    proofCategory: "reliability",
     href: "/demos/rate-limiter",
+  },
+];
+
+export const proofPaths: readonly ProofPath[] = [
+  {
+    id: "hiring-manager",
+    audience: "Hiring Managers",
+    question: "Need evidence of production ownership and outcomes?",
+    destination: "#impact",
+    cta: "Review quantified impact",
+  },
+  {
+    id: "engineering-leads",
+    audience: "Engineering Leads",
+    question: "Evaluating architecture and security judgment?",
+    destination: "#projects",
+    cta: "Inspect technical proof",
+  },
+  {
+    id: "fintech-founders",
+    audience: "Founders / Clients",
+    question: "Planning fintech delivery under risk and compliance constraints?",
+    destination: "#contact",
+    cta: "Start architecture conversation",
+  },
+];
+
+export const evidenceCards: readonly EvidenceCard[] = [
+  {
+    id: "emi-migration",
+    claim: "100% contract stability during EMI migration",
+    problem: "Legacy SOAP endpoints with partner dependencies could not break during transition.",
+    action: "Led phased migration to REST with compatibility adapters and contract-based validation.",
+    result: "Completed a 5-month migration to NetBank with zero partner contract breakage.",
+    constraint: "Detailed contracts and client identifiers are redacted under NDA.",
+  },
+  {
+    id: "security-remediation",
+    claim: "High-risk findings remediated with reusable security standards",
+    problem: "VAPT surfaced high-risk vulnerabilities in critical payment paths.",
+    action: "Standardized Cloud KMS, request signing, encrypted payload handling, and least-privilege controls.",
+    result: "Raised baseline security posture across multiple services and shortened secure integration onboarding by 30%.",
+    constraint: "Security reports and exact findings are withheld for compliance reasons.",
+  },
+  {
+    id: "incident-operations",
+    claim: "99.9% availability with incident runbook ownership",
+    problem: "Partner outages and integration variance increased operational recovery risk.",
+    action: "Authored runbooks and responder flows for recurring payment failure scenarios.",
+    result: "Sustained 99.9% availability while reducing mean-time-to-recovery.",
+    constraint: "Incident timelines and provider-level data are summarized due to operational confidentiality.",
+  },
+];
+
+export const contactIntents: readonly ContactIntent[] = [
+  {
+    id: "book-intro",
+    label: "Book Intro Call",
+    description: "15-20 minute fit check for backend, fintech, or platform roles.",
+    href: "mailto:conalesjames@gmail.com?subject=Portfolio%20Intro%20Call&body=Hi%20James%2C%20I%20want%20to%20schedule%20a%20short%20intro%20call.",
+    type: "primary",
+  },
+  {
+    id: "architecture-walkthrough",
+    label: "Request Architecture Walkthrough",
+    description: "Deep dive into migration decisions, security trade-offs, and delivery constraints.",
+    href: "mailto:conalesjames@gmail.com?subject=Architecture%20Walkthrough%20Request&body=Hi%20James%2C%20I%20want%20to%20review%20your%20fintech%20architecture%20approach.",
+    type: "secondary",
+  },
+  {
+    id: "recruiter-priority",
+    label: "Recruiter Priority Thread",
+    description: "Share role scope and timeline to receive a targeted capability match response.",
+    href: "mailto:conalesjames@gmail.com?subject=Recruiter%20Priority%20Thread&body=Hi%20James%2C%20I%20am%20hiring%20for%20a%20role%20that%20matches%20your%20profile.",
+    type: "secondary",
   },
 ];
 
@@ -304,5 +388,4 @@ export const metrics = {
     visualization: "badge" as const,
   },
 };
-
 

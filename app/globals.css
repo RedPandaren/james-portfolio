@@ -9,21 +9,22 @@
 
 /* --- PHASE 1: COLOR SYSTEM --- */
 
-/* Primitive: Deep Blue palette (OKLCH, H≈264) */
+/* Primitive palette + semantic runtime variables */
 :root {
-  --blue-50: oklch(0.97 0.02 264);
-  --blue-100: oklch(0.93 0.04 264);
-  --blue-200: oklch(0.86 0.08 264);
-  --blue-300: oklch(0.74 0.12 264);
-  --blue-400: oklch(0.62 0.15 264);
-  --blue-500: oklch(0.52 0.17 264);
-  --blue-600: oklch(0.45 0.18 264);
-  --blue-700: oklch(0.38 0.16 264);
-  --blue-800: oklch(0.32 0.13 264);
-  --blue-900: oklch(0.25 0.10 264);
-  --blue-950: oklch(0.18 0.07 264);
+  /* Primitive: Deep Blue palette */
+  --blue-50: oklch(0.97 0.02 260);
+  --blue-100: oklch(0.93 0.04 260);
+  --blue-200: oklch(0.87 0.07 260);
+  --blue-300: oklch(0.77 0.10 260);
+  --blue-400: oklch(0.66 0.12 260);
+  --blue-500: oklch(0.56 0.14 260);
+  --blue-600: oklch(0.47 0.15 260);
+  --blue-700: oklch(0.40 0.14 260);
+  --blue-800: oklch(0.33 0.11 260);
+  --blue-900: oklch(0.26 0.08 260);
+  --blue-950: oklch(0.19 0.06 260);
 
-  /* Primitive: Neutral palette (OKLCH, zero chroma) */
+  /* Primitive: Neutral palette */
   --gray-50: oklch(0.985 0 0);
   --gray-100: oklch(0.965 0 0);
   --gray-200: oklch(0.925 0 0);
@@ -44,51 +45,86 @@
   --red-500: oklch(0.55 0.2 25);
   --red-600: oklch(0.48 0.19 25);
 
-  /* --- PHASE 2: SPACING, SURFACES, ELEVATION --- */
-
-  /* Motion tokens (Phase 3, defined here for :root scope) */
+  /* Motion tokens */
   --duration-quick: 120ms;
   --duration-standard: 280ms;
   --duration-elaborate: 450ms;
   --ease-productive: cubic-bezier(0.2, 0, 0, 1);
   --ease-expressive: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-entrance: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Semantic runtime tokens: light mode */
+  --sem-primary: var(--blue-600);
+  --sem-primary-hover: var(--blue-700);
+  --sem-primary-muted: oklch(0.94 0.04 258);
+  --sem-primary-subtle: oklch(0.975 0.02 258);
+
+  --sem-text-primary: oklch(0.24 0.015 260);
+  --sem-text-secondary: oklch(0.43 0.012 260);
+  --sem-text-muted: oklch(0.60 0.01 260);
+  --sem-text-inverse: var(--gray-50);
+  --sem-text-link: var(--sem-primary);
+  --sem-text-link-hover: var(--sem-primary-hover);
+
+  --sem-background: oklch(0.985 0.004 258);
+  --sem-surface: oklch(0.995 0.003 258);
+  --sem-surface-raised: oklch(0.972 0.005 258);
+  --sem-surface-secondary: oklch(0.96 0.006 258);
+  --sem-surface-overlay: oklch(0.998 0.002 258);
+  --sem-surface-glass: oklch(0.998 0.002 258 / 0.78);
+
+  --sem-border: oklch(0.90 0.008 258);
+  --sem-border-subtle: oklch(0.95 0.005 258);
+  --sem-border-strong: oklch(0.83 0.014 258);
+  --sem-border-focus: oklch(0.58 0.14 258);
+
+  --sem-success: var(--green-600);
+  --sem-warning: var(--amber-600);
+  --sem-error: var(--red-600);
+  --sem-info: var(--blue-600);
+
+  --ambient-glow-a: oklch(0.72 0.10 256 / 0.18);
+  --ambient-glow-b: oklch(0.84 0.05 274 / 0.12);
+  --ambient-grid: oklch(0.72 0.01 258 / 0.08);
+
+  color-scheme: light;
 }
 
-/* Semantic tokens: Light mode */
+/* Semantic tokens exposed to Tailwind utilities */
 @theme inline {
   /* Colors: Primary */
-  --color-primary: var(--blue-600);
-  --color-primary-hover: var(--blue-700);
-  --color-primary-muted: var(--blue-100);
-  --color-primary-subtle: var(--blue-50);
+  --color-primary: var(--sem-primary);
+  --color-primary-hover: var(--sem-primary-hover);
+  --color-primary-muted: var(--sem-primary-muted);
+  --color-primary-subtle: var(--sem-primary-subtle);
 
   /* Colors: Text */
-  --color-text-primary: var(--gray-900);
-  --color-text-secondary: var(--gray-600);
-  --color-text-muted: var(--gray-400);
-  --color-text-inverse: var(--gray-50);
-  --color-text-link: var(--blue-600);
-  --color-text-link-hover: var(--blue-700);
+  --color-text-primary: var(--sem-text-primary);
+  --color-text-secondary: var(--sem-text-secondary);
+  --color-text-muted: var(--sem-text-muted);
+  --color-text-inverse: var(--sem-text-inverse);
+  --color-text-link: var(--sem-text-link);
+  --color-text-link-hover: var(--sem-text-link-hover);
 
   /* Colors: Background & Surface */
-  --color-background: var(--gray-50);
-  --color-surface: oklch(1 0 0);
-  --color-surface-raised: var(--gray-100);
-  --color-surface-overlay: oklch(1 0 0);
-  --color-surface-glass: oklch(1 0 0 / 0.7);
+  --color-background: var(--sem-background);
+  --color-surface: var(--sem-surface);
+  --color-surface-raised: var(--sem-surface-raised);
+  --color-surface-secondary: var(--sem-surface-secondary);
+  --color-surface-overlay: var(--sem-surface-overlay);
+  --color-surface-glass: var(--sem-surface-glass);
 
   /* Colors: Border */
-  --color-border: var(--gray-200);
-  --color-border-subtle: var(--gray-100);
-  --color-border-strong: var(--gray-300);
-  --color-border-focus: var(--blue-500);
+  --color-border: var(--sem-border);
+  --color-border-subtle: var(--sem-border-subtle);
+  --color-border-strong: var(--sem-border-strong);
+  --color-border-focus: var(--sem-border-focus);
 
   /* Colors: Status */
-  --color-success: var(--green-600);
-  --color-warning: var(--amber-600);
-  --color-error: var(--red-600);
-  --color-info: var(--blue-600);
+  --color-success: var(--sem-success);
+  --color-warning: var(--sem-warning);
+  --color-error: var(--sem-error);
+  --color-info: var(--sem-info);
 
   /* Spacing (4px base) */
   --spacing-px: 1px;
@@ -181,47 +217,49 @@
   --amber-500: oklch(0.80 0.14 75);
   --red-500: oklch(0.65 0.18 25);
 
-  @theme inline {
-    /* Colors: Primary */
-    --color-primary: var(--blue-400);
-    --color-primary-hover: var(--blue-300);
-    --color-primary-muted: var(--blue-900);
-    --color-primary-subtle: var(--blue-950);
+  --sem-primary: oklch(0.80 0.01 260);
+  --sem-primary-hover: oklch(0.86 0.01 260);
+  --sem-primary-muted: oklch(0.26 0.006 260);
+  --sem-primary-subtle: oklch(0.20 0.004 260);
 
-    /* Colors: Text (improved contrast) */
-    --color-text-primary: var(--gray-50);
-    --color-text-secondary: var(--gray-300);
-    --color-text-muted: var(--gray-400);
-    --color-text-inverse: var(--gray-900);
-    --color-text-link: var(--blue-400);
-    --color-text-link-hover: var(--blue-300);
+  --sem-text-primary: oklch(0.95 0.003 260);
+  --sem-text-secondary: oklch(0.79 0.004 260);
+  --sem-text-muted: oklch(0.63 0.003 260);
+  --sem-text-inverse: oklch(0.17 0.002 260);
+  --sem-text-link: oklch(0.82 0.008 260);
+  --sem-text-link-hover: oklch(0.88 0.008 260);
 
-    /* Colors: Background & Surface */
-    --color-background: oklch(0.10 0 0);
-    --color-surface: oklch(0.14 0 0);
-    --color-surface-raised: var(--gray-800);
-    --color-surface-overlay: oklch(0.14 0 0);
-    --color-surface-glass: oklch(0.14 0 0 / 0.8);
+  --sem-background: oklch(0.13 0.003 260);
+  --sem-surface: oklch(0.17 0.004 260);
+  --sem-surface-raised: oklch(0.21 0.005 260);
+  --sem-surface-secondary: oklch(0.23 0.005 260);
+  --sem-surface-overlay: oklch(0.18 0.004 260 / 0.95);
+  --sem-surface-glass: oklch(0.18 0.004 260 / 0.78);
 
-    /* Colors: Border */
-    --color-border: var(--gray-800);
-    --color-border-subtle: var(--gray-800);
-    --color-border-strong: var(--gray-700);
-    --color-border-focus: var(--blue-400);
+  --sem-border: oklch(0.33 0.005 260);
+  --sem-border-subtle: oklch(0.27 0.004 260);
+  --sem-border-strong: oklch(0.41 0.006 260);
+  --sem-border-focus: oklch(0.78 0.01 260);
 
-    /* Colors: Status */
-    --color-success: var(--green-500);
-    --color-warning: var(--amber-500);
-    --color-error: var(--red-500);
-    --color-info: var(--blue-400);
+  --sem-success: var(--green-500);
+  --sem-warning: var(--amber-500);
+  --sem-error: var(--red-500);
+  --sem-info: oklch(0.80 0.01 260);
 
-    /* Shadows (enhanced for dark mode) */
-    --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.3);
-    --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.4);
-    --shadow-md: 0 4px 8px -1px oklch(0 0 0 / 0.5), 0 2px 4px -1px oklch(0 0 0 / 0.3);
-    --shadow-lg: 0 8px 24px -4px oklch(0 0 0 / 0.6), 0 4px 8px -2px oklch(0 0 0 / 0.4);
-    --shadow-xl: 0 16px 48px -8px oklch(0 0 0 / 0.7), 0 8px 16px -4px oklch(0 0 0 / 0.5);
-  }
+  --ambient-glow-a: oklch(0.32 0.01 260 / 0.14);
+  --ambient-glow-b: oklch(0.25 0.008 260 / 0.12);
+  --ambient-grid: oklch(0.50 0.004 260 / 0.07);
+
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.4);
+  --shadow-md: 0 4px 8px -1px oklch(0 0 0 / 0.5), 0 2px 4px -1px oklch(0 0 0 / 0.3);
+  --shadow-lg: 0 8px 24px -4px oklch(0 0 0 / 0.6), 0 4px 8px -2px oklch(0 0 0 / 0.4);
+  --shadow-xl: 0 16px 48px -8px oklch(0 0 0 / 0.7), 0 8px 16px -4px oklch(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+:root.light {
+  color-scheme: light;
 }
 
 /* Reduced motion accessibility */
@@ -247,12 +285,19 @@
   }
 
   body {
-    background: var(--color-background);
-    color: var(--color-text-primary);
+    background-color: var(--sem-background);
+    background-image:
+      radial-gradient(circle at 8% 10%, var(--ambient-glow-a) 0%, transparent 42%),
+      radial-gradient(circle at 90% 12%, var(--ambient-glow-b) 0%, transparent 38%),
+      linear-gradient(180deg, color-mix(in oklch, var(--sem-background) 94%, var(--sem-primary-subtle) 6%) 0%, var(--sem-background) 65%),
+      linear-gradient(90deg, var(--ambient-grid) 1px, transparent 1px),
+      linear-gradient(0deg, var(--ambient-grid) 1px, transparent 1px);
+    background-size: auto, auto, auto, 44px 44px, 44px 44px;
+    color: var(--sem-text-primary);
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.25s, color 0.25s;
   }
 
   section[id] {
@@ -305,8 +350,6 @@
 }
 
 /* Mermaid diagram dark mode support */
-@media (prefers-color-scheme: dark) {
-  .mermaid-diagram {
-    filter: invert(1) hue-rotate(180deg);
-  }
+:root.dark .mermaid-diagram {
+  filter: invert(1) hue-rotate(180deg);
 }

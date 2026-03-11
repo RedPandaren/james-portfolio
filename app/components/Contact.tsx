@@ -1,5 +1,6 @@
-import { personalInfo } from "@/app/lib/data";
+import { personalInfo, contactIntents } from "@/app/lib/data";
 import ScrollReveal from "./ScrollReveal";
+import TrackedAnchor from "./TrackedAnchor";
 
 export default function Contact() {
   return (
@@ -11,6 +12,30 @@ export default function Contact() {
             Let&apos;s Connect
           </h2>
 
+          <p className="text-text-secondary max-w-2xl mx-auto mb-12">
+            Choose the fastest path based on your goal. I respond with role-fit context,
+            architecture rationale, and next-step options.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14 text-left">
+            {contactIntents.map((intent) => (
+              <TrackedAnchor
+                key={intent.id}
+                href={intent.href}
+                className={`rounded-xl border p-5 transition-colors ${
+                  intent.type === "primary"
+                    ? "border-primary/40 bg-primary/5 hover:border-primary"
+                    : "border-border-subtle bg-surface/70 hover:border-border-strong"
+                }`}
+                eventName="contact_intent_click"
+                eventPayload={{ intent: intent.id }}
+              >
+                <h3 className="text-sm font-semibold text-text-primary mb-2">{intent.label}</h3>
+                <p className="text-sm text-text-secondary leading-relaxed">{intent.description}</p>
+              </TrackedAnchor>
+            ))}
+          </div>
+
           {/* Contact Links */}
           <div className="flex flex-wrap justify-center gap-8 mb-12">
             {/* Phone */}
@@ -18,12 +43,13 @@ export default function Contact() {
               <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
                 Phone
               </p>
-              <a
+              <TrackedAnchor
                 href={`tel:${personalInfo.contact.phone}`}
                 className="text-lg text-text-secondary hover:text-primary transition-colors"
+                eventName="contact_phone_click"
               >
                 {personalInfo.contact.phone}
-              </a>
+              </TrackedAnchor>
             </div>
 
             {/* Location */}
@@ -38,12 +64,13 @@ export default function Contact() {
           </div>
 
           {/* Primary Email CTA */}
-          <a
+          <TrackedAnchor
             href={`mailto:${personalInfo.contact.email}`}
             className="inline-block bg-text-primary text-text-inverse rounded-full px-10 py-4 font-medium hover:opacity-90 transition-opacity text-lg"
+            eventName="contact_email_click"
           >
             {personalInfo.contact.email}
-          </a>
+          </TrackedAnchor>
         </ScrollReveal>
       </div>
     </section>

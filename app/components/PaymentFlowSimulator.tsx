@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useReducer, useEffect } from "react";
+import { useState, useReducer } from "react";
 import Link from "next/link";
 
 type Phase = "INQUIRY" | "STAGING" | "OTP" | "CONFIRMATION" | "CIRCUIT_BREAK" | "RECOVERY";
@@ -104,7 +104,10 @@ export default function PaymentFlowSimulator() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [otpInput, setOtpInput] = useState("");
 
-  const addLog = (msg: string, logType: "info" | "success" | "error" = "info") => {
+  const addLog = (
+    msg: string,
+    logType: "info" | "success" | "error" | "warn" = "info",
+  ) => {
     dispatch({ type: "ADD_LOG", msg, logType });
   };
 
@@ -243,8 +246,8 @@ export default function PaymentFlowSimulator() {
       const customer = validation.customer;
       if (customer) {
         addLog(`403 FORBIDDEN: Identity validation failed`, "error");
-        addLog(`Expected: ${customer.firstName} ${customer.lastName}`, "warn" as any);
-        addLog(`Provided: ${state.formData.firstName} ${state.formData.lastName}`, "warn" as any);
+        addLog(`Expected: ${customer.firstName} ${customer.lastName}`, "warn");
+        addLog(`Provided: ${state.formData.firstName} ${state.formData.lastName}`, "warn");
         addLog("SECURITY ALERT: Name mismatch detected. Access denied.", "error");
       }
       dispatch({ type: "SET_PROCESSING", payload: false });
@@ -297,7 +300,7 @@ export default function PaymentFlowSimulator() {
     <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 p-4 relative">
       {/* Fake Email Toast */}
       {state.showEmailToast && (
-        <div className="fixed top-8 right-8 z-50 bg-white dark:bg-zinc-900 border border-border-strong rounded-xl shadow-2xl p-4 max-w-xs animate-in slide-in-from-right duration-500">
+        <div className="fixed top-8 right-8 z-50 bg-surface border border-border-strong rounded-xl shadow-2xl p-4 max-w-xs animate-in slide-in-from-right duration-500">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -405,7 +408,7 @@ export default function PaymentFlowSimulator() {
                       dispatch({ type: "UPDATE_FORM", field: "refNumber", value: MAGIC_REF });
                       dispatch({ type: "UPDATE_FORM", field: "firstName", value: "James Florence" });
                       dispatch({ type: "UPDATE_FORM", field: "lastName", value: "Conales" });
-                    }} className="w-full text-left font-mono text-xs bg-white dark:bg-zinc-800 p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
+                    }} className="w-full text-left font-mono text-xs bg-surface p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
                       {MAGIC_REF} → James Florence Conales
                     </button>
                     {SAMPLE_CUSTOMERS.map((customer) => (
@@ -413,7 +416,7 @@ export default function PaymentFlowSimulator() {
                         dispatch({ type: "UPDATE_FORM", field: "refNumber", value: customer.refNumber });
                         dispatch({ type: "UPDATE_FORM", field: "firstName", value: customer.firstName });
                         dispatch({ type: "UPDATE_FORM", field: "lastName", value: customer.lastName });
-                      }} className="w-full text-left font-mono text-xs bg-white dark:bg-zinc-800 p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
+                      }} className="w-full text-left font-mono text-xs bg-surface p-2 rounded border border-primary/30 hover:bg-primary/10 transition-colors">
                         {customer.refNumber} → {customer.firstName} {customer.lastName}
                       </button>
                     ))}
@@ -554,7 +557,7 @@ export default function PaymentFlowSimulator() {
                   ) : "Verify & Complete"}
                 </button>
                 <div className="text-xs text-text-muted">
-                  Didn't receive code? <button type="button" onClick={() => dispatch({ type: "SHOW_EMAIL_TOAST", payload: true })} className="text-primary hover:underline">Resend Simulation Email</button>
+                  Did not receive code? <button type="button" onClick={() => dispatch({ type: "SHOW_EMAIL_TOAST", payload: true })} className="text-primary hover:underline">Resend Simulation Email</button>
                 </div>
               </form>
             </div>
@@ -574,7 +577,7 @@ export default function PaymentFlowSimulator() {
                 The funds have been credited. A simulated receipt has been generated following the backend commitment.
               </p>
 
-              <div className="w-full bg-white dark:bg-zinc-950 border border-border-subtle rounded-xl p-6 shadow-xl relative overflow-hidden">
+              <div className="w-full bg-surface border border-border-subtle rounded-xl p-6 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-blue-500" />
                 
                 <div className="flex justify-between items-start mb-6">
@@ -604,7 +607,7 @@ export default function PaymentFlowSimulator() {
                 </div>
 
                 <div className="text-center font-mono text-[9px] text-text-muted uppercase tracking-widest">
-                  Thank you for using James' Simulation Suite
+                  Thank you for using James Simulation Suite
                 </div>
               </div>
 

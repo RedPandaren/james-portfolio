@@ -17,7 +17,12 @@ function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "light";
   try {
     const stored = localStorage.getItem("theme");
-    return stored === "dark" ? "dark" : "light";
+    if (stored === "dark" || stored === "light") {
+      return stored;
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   } catch {
     return "light";
   }
@@ -35,8 +40,10 @@ export default function ThemeProvider({
 
     if (theme === "dark") {
       root.classList.add("dark");
+      root.classList.remove("light");
     } else {
       root.classList.remove("dark");
+      root.classList.add("light");
     }
 
     try {

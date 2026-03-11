@@ -8,10 +8,12 @@ import Projects from "@/app/components/Projects";
 import TechStack from "@/app/components/TechStack";
 import Contact from "@/app/components/Contact";
 import Footer from "@/app/components/Footer";
+import ScrollDepthTracker from "@/app/components/ScrollDepthTracker";
 
 export default function Home() {
   return (
     <>
+      <ScrollDepthTracker page="home" />
       <Header />
       <main className="flex flex-col">
         <Hero />

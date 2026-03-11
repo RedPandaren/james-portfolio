@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import ScrollReveal from "@/app/components/ScrollReveal";
+import ScrollDepthTracker from "@/app/components/ScrollDepthTracker";
 import Footer from "@/app/components/Footer";
 
 const remittanceProviders = [
@@ -217,11 +218,15 @@ const techStack = [
   },
 ];
 
+const caseStudyScrollThresholds = [20, 40, 60, 80, 100] as const;
+
 export default function PerahubPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-surface">
+      <ScrollDepthTracker page="perahub-case-study" thresholds={caseStudyScrollThresholds} />
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-border-subtle px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
         <Link href="/#projects" className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors text-sm font-medium">
@@ -474,7 +479,7 @@ export default function PerahubPage() {
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <ScrollReveal key={feature.title} stagger={true}>
                 <div className="bg-surface-glass backdrop-blur-xl border border-border-subtle/50 rounded-2xl p-6 hover:border-primary/30 transition-colors group">
                   <div className="flex items-start gap-4">
@@ -598,7 +603,7 @@ export default function PerahubPage() {
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {techStack.map((category, index) => (
+            {techStack.map((category) => (
               <ScrollReveal key={category.category}>
                 <div className="bg-surface-glass backdrop-blur-xl border border-border-subtle/50 rounded-2xl p-6 h-full">
                   <div className="flex items-center gap-3 mb-4">
@@ -742,7 +747,7 @@ export default function PerahubPage() {
             <div className="flex-1 text-center md:text-left">
               <h4 className="font-semibold text-text-primary mb-2">High Availability Design</h4>
               <p className="text-xs sm:text-sm text-text-secondary">
-                Leveraging Google Cloud Run's multi-region failover and auto-scaling to ensure 99.9% uptime 
+                Leveraging Google Cloud Run multi-region failover and auto-scaling to ensure 99.9% uptime 
                 during peak transaction windows like paydays and holidays.
               </p>
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 type SecurityTest = {
@@ -71,11 +71,9 @@ const ApiSecurityTester: React.FC = () => {
   ]);
 
   const [logs, setLogs] = useState<Array<{ time: string; message: string; type: "info" | "success" | "error"; }>>([]);
-  const [apiKey] = useState("sk_test_4242424242424242");
-  const [secretKey] = useState("prod_secret_key_production_2024");
-  const [payload, setPayload] = useState<PayloadData>({
+  const [payload] = useState<PayloadData>({
     message: "Payment transfer request",
-    timestamp: Date.now(),
+    timestamp: 1704063600000,
     userId: "user_12345",
     amount: 50000
   });
@@ -101,7 +99,6 @@ const ApiSecurityTester: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Simulate HMAC generation (in real app, would use crypto.createHmac)
-    const message = JSON.stringify(payload);
     const hmacDigest = "d8a8f5b6f5a9f5c5f5e5f5a5f5b5f5d5f5e5f5c5f5a5f5b5f5d5f"; // Simulated HMAC
     
     addLog(`📝 Generated HMAC: ${hmacDigest.substring(0, 20)}...`, "info");
@@ -143,7 +140,6 @@ const ApiSecurityTester: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Simulate RSA signing (in real app, would use crypto.sign with RSA private key)
-    const message = JSON.stringify(payload);
     const signature = "MIICdgIBADANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."; // Simulated RSA signature
     
     addLog(`🔏 Generated RSA signature: ${signature.substring(0, 30)}...`, "info");
@@ -184,7 +180,6 @@ const ApiSecurityTester: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Simulate encryption (in real app, would use crypto.createCipher with Cloud KMS)
-    const plaintext = JSON.stringify(payload);
     const encryptedData = "U2FsdGVkX1+vupppZjkvW8e..."; // Simulated encrypted payload
     const iv = "a1b2c3d4e5f67890123456789012345678"; // Simulated IV
     
@@ -198,8 +193,6 @@ const ApiSecurityTester: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Simulate decryption success
-    const decryptedData = JSON.stringify(payload);
-    
     setTests(prev => prev.map(t => 
       t.id === "payload-encryption" ? { 
         ...t, 
@@ -290,7 +283,7 @@ const ApiSecurityTester: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Simulate validation
-    const currentTime = Date.now() / 1000;
+    const currentTime = 1704063999;
     const tokenExpiry = 1704064000; // Future timestamp
     const isExpired = currentTime > tokenExpiry;
     const signatureValid = signature.startsWith("signature");

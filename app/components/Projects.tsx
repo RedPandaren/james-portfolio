@@ -1,6 +1,37 @@
 import { projects, perahubNavLink } from "@/app/lib/data";
 import ScrollReveal from "./ScrollReveal";
-import Link from "next/link";
+import TrackedLink from "./TrackedLink";
+
+const projectAnchorMap: Record<string, string> = {
+  "Encryption Visualizer": "demo-encryption-visualizer",
+  "Payment Flow Simulator": "demo-payment-flow",
+  "API Security Tester": "demo-api-security",
+  "Rate Limiting Simulator": "demo-rate-limiter",
+};
+
+const proofJourneys = [
+  {
+    id: "journey-security",
+    title: "Security Decision Path",
+    question: "Can he secure financial APIs under compliance pressure?",
+    destination: "#demo-api-security",
+    coverage: "API Security Tester + Encryption Visualizer",
+  },
+  {
+    id: "journey-reliability",
+    title: "Reliability Decision Path",
+    question: "Can he protect service stability under volatile traffic?",
+    destination: "#demo-rate-limiter",
+    coverage: "Rate Limiting Simulator + incident ownership evidence",
+  },
+  {
+    id: "journey-ownership",
+    title: "Product Ownership Path",
+    question: "Can he own mission-critical transaction flows end-to-end?",
+    destination: "#case-study-perahub",
+    coverage: "Perahub case study + Payment Flow Simulator",
+  },
+];
 
 export default function Projects() {
   return (
@@ -21,10 +52,31 @@ export default function Projects() {
 
         {/* Perahub Featured Project Card */}
         <ScrollReveal>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-10">
+            {proofJourneys.map((journey) => (
+              <TrackedLink
+                key={journey.id}
+                href={journey.destination}
+                className="rounded-xl border border-border-subtle bg-surface/70 p-5 hover:border-border-strong transition-colors"
+                eventName="proof_path_click"
+                eventPayload={{ journey: journey.title }}
+              >
+                <p className="text-[11px] uppercase tracking-[0.16em] text-text-muted font-semibold mb-2">
+                  {journey.title}
+                </p>
+                <p className="text-sm text-text-primary leading-relaxed mb-3">{journey.question}</p>
+                <p className="text-xs text-primary font-semibold">{journey.coverage}</p>
+              </TrackedLink>
+            ))}
+          </div>
+
           <div className="mb-12">
-            <Link
+            <TrackedLink
+              id="case-study-perahub"
               href={perahubNavLink.href}
               className="group block border-2 border-primary/30 rounded-2xl p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300 bg-primary/5"
+              eventName="case_study_opened"
+              eventPayload={{ caseStudy: "perahub" }}
             >
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-4">
@@ -75,7 +127,7 @@ export default function Projects() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </div>
-            </Link>
+            </TrackedLink>
           </div>
         </ScrollReveal>
 
@@ -128,11 +180,19 @@ export default function Projects() {
               );
 
               const className = "group border border-border-subtle rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full";
+              const cardId = projectAnchorMap[project.title];
 
               return project.href ? (
-                <Link key={project.title} href={project.href} className={className}>
+                <TrackedLink
+                  key={project.title}
+                  id={cardId}
+                  href={project.href}
+                  className={className}
+                  eventName="demo_opened"
+                  eventPayload={{ demo: project.title, category: project.proofCategory ?? "general" }}
+                >
                   {CardContent}
-                </Link>
+                </TrackedLink>
               ) : (
                 <div key={project.title} className={className}>
                   {CardContent}

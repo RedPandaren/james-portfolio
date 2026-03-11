@@ -7,6 +7,7 @@ export interface PersonalInfo {
 
 export interface ProfessionalSummary {
   readonly headline: string;
+  readonly valueProposition: string;
   readonly focus: readonly string[];
   readonly specialization: string;
 }
@@ -43,7 +44,33 @@ export interface ProjectCard {
   readonly description: string;
   readonly techTags: readonly string[];
   readonly status: string;
+  readonly proofCategory?: "security" | "reliability" | "ownership";
   readonly href?: string;
+}
+
+export interface ProofPath {
+  readonly id: string;
+  readonly audience: string;
+  readonly question: string;
+  readonly destination: string;
+  readonly cta: string;
+}
+
+export interface EvidenceCard {
+  readonly id: string;
+  readonly claim: string;
+  readonly problem: string;
+  readonly action: string;
+  readonly result: string;
+  readonly constraint: string;
+}
+
+export interface ContactIntent {
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+  readonly href: string;
+  readonly type: "primary" | "secondary";
 }
 
 export interface EducationItem {
