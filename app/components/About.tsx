@@ -5,7 +5,7 @@ export default function About() {
   const educationItem = education[0];
 
   return (
-    <section id="about" className="py-32 lg:py-48 px-8">
+    <section id="about" className="py-32 lg:py-48 px-4 sm:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
         <ScrollReveal>
@@ -58,16 +58,16 @@ export default function About() {
 
           {/* Right Column: Achievements Grid */}
           <ScrollReveal className="lg:col-span-7" stagger>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {achievements.map((achievement) => (
                 <div
                   key={achievement.key}
-                  className="bg-surface border border-border rounded-xl p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  className="bg-surface border border-border rounded-xl p-4 sm:p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 min-w-0"
                 >
-                  <div className="text-3xl lg:text-4xl font-bold text-text-primary mb-2">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary mb-1 sm:mb-2 truncate">
                     {achievement.value}
                   </div>
-                  <div className="text-sm text-text-muted">
+                  <div className="text-xs sm:text-sm text-text-muted leading-tight">
                     {achievement.label}
                   </div>
                 </div>
