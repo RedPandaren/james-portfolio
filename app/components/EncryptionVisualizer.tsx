@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useReducer, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useReducer, useEffect, useRef } from "react";
 
 type Mode = "SIGN" | "VERIFY";
 
@@ -176,31 +175,31 @@ export default function EncryptionVisualizer() {
         </div>
 
         {/* Terminal Area */}
-        <div className="bg-zinc-950 rounded-2xl p-6 flex-1 flex flex-col min-h-[400px] border border-white/5">
+        <div className="bg-surface rounded-2xl p-6 flex-1 flex flex-col min-h-[400px] border border-border-subtle shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
             </div>
-            <span className="text-[10px] font-mono text-white/30 ml-2 uppercase tracking-widest">crypto_engine.log</span>
+            <span className="text-[10px] font-mono text-text-muted ml-2 uppercase tracking-widest">crypto_engine.log</span>
           </div>
           <div ref={logContainerRef} className="flex-1 overflow-y-auto space-y-2 font-mono text-[11px] pr-2 scrollbar-thin scrollbar-thumb-white/10">
             {state.logs.map((log, i) => (
               <div key={i} className={`flex gap-3 ${
-                log.type === 'error' ? 'text-red-400' :
-                log.type === 'success' ? 'text-green-400' :
-                'text-zinc-400'
+                log.type === 'error' ? 'text-red-500' :
+                log.type === 'success' ? 'text-green-500' :
+                'text-text-secondary'
               }`}>
-                <span className="text-zinc-600 shrink-0">[{log.time.split(' ')[0]}]</span>
+                <span className="text-text-muted shrink-0">[{log.time.split(' ')[0]}]</span>
                 <span>{log.msg}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-white/5">
+          <div className="mt-4 pt-4 border-t border-border-subtle">
             <button 
               onClick={() => dispatch({ type: "RESET" })}
-              className="text-[10px] text-zinc-500 hover:text-primary transition-colors flex items-center gap-2"
+              className="text-[10px] text-text-muted hover:text-primary transition-colors flex items-center gap-2"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -244,7 +243,7 @@ export default function EncryptionVisualizer() {
                 className="w-full bg-surface-secondary/50 border border-border-strong rounded-xl px-4 py-3 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary/30"
                 placeholder="Paste signature here..."
               />
-              <p className="text-[10px] text-text-muted">Tip: Generate a signature in 'Sign' mode first, then paste it here to verify.</p>
+              <p className="text-[10px] text-text-muted">Tip: Generate a signature in &apos;Sign&apos; mode first, then paste it here to verify.</p>
             </div>
           )}
 
@@ -349,9 +348,9 @@ export default function EncryptionVisualizer() {
                         Copy Signature
                     </button>
                </div>
-               <div className="bg-zinc-950 rounded-xl p-4 font-mono text-[11px] text-zinc-300 break-all leading-relaxed border border-white/5">
-                    <span className="text-zinc-500">"james-sample-signature":</span> "{state.signature}"
-               </div>
+               <div className="bg-surface-raised rounded-xl p-4 font-mono text-[11px] text-text-secondary break-all leading-relaxed border border-border-subtle">
+                    <span className="text-text-muted">&quot;james-sample-signature&quot;:</span> &quot;{state.signature}&quot;
+                </div>
             </div>
         )}
         
@@ -364,7 +363,7 @@ export default function EncryptionVisualizer() {
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-text-primary">Integrity Verified</h3>
-                    <p className="text-sm text-text-secondary mt-1">The request signature matches the public key hash. The data is authentic and hasn't been modified since it was signed by the Swift/Kotlin client.</p>
+                    <p className="text-sm text-text-secondary mt-1">The request signature matches the public key hash. The data is authentic and has not been modified since it was signed by the Swift/Kotlin client.</p>
                 </div>
             </div>
         )}

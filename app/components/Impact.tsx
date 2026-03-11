@@ -1,5 +1,6 @@
-import { metrics } from "@/app/lib/data";
+import { metrics, evidenceCards } from "@/app/lib/data";
 import ScrollReveal from "./ScrollReveal";
+import TrackedLink from "./TrackedLink";
 
 export default function Impact() {
   return (
@@ -37,6 +38,40 @@ export default function Impact() {
           </div>
         </ScrollReveal>
 
+        <ScrollReveal>
+          <div className="mt-12 sm:mt-16">
+            <p className="text-xs uppercase tracking-[0.18em] text-text-muted mb-4">
+              Evidence Trail
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+              {evidenceCards.map((card) => (
+                <article
+                  key={card.id}
+                  className="bg-surface border border-border-subtle rounded-xl p-5 sm:p-6"
+                >
+                  <h3 className="text-sm font-semibold text-text-primary leading-relaxed mb-4">
+                    {card.claim}
+                  </h3>
+                  <div className="space-y-2 text-xs sm:text-sm text-text-secondary leading-relaxed">
+                    <p>
+                      <span className="font-semibold text-text-primary">Problem:</span> {card.problem}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-text-primary">Action:</span> {card.action}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-text-primary">Result:</span> {card.result}
+                    </p>
+                    <p className="text-text-muted">
+                      <span className="font-semibold text-text-primary">Constraint:</span> {card.constraint}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
+
         {/* Call to Action */}
         <ScrollReveal>
           <div className="mt-12 sm:mt-16 text-center">
@@ -44,15 +79,17 @@ export default function Impact() {
               These metrics demonstrate consistent delivery of production-grade fintech solutions 
               with measurable business impact.
             </p>
-            <a
+            <TrackedLink
               href="#contact"
               className="inline-flex items-center gap-2 bg-primary text-text-inverse px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+              eventName="impact_cta_click"
+              eventPayload={{ cta: "discuss-project" }}
             >
               Discuss Your Project
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </TrackedLink>
           </div>
         </ScrollReveal>
       </div>
