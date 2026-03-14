@@ -42,8 +42,14 @@ export interface NavLink {
 export interface ProjectCard {
   readonly title: string;
   readonly description: string;
+  readonly interactionHint: string;
   readonly techTags: readonly string[];
   readonly status: string;
+  readonly preview: {
+    readonly imageSrc: string;
+    readonly imageAlt: string;
+    readonly eyebrow: string;
+  };
   readonly proofCategory?: "security" | "reliability" | "ownership";
   readonly href?: string;
 }

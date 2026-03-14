@@ -211,8 +211,14 @@ export const projects: readonly ProjectCard[] = [
     title: "Encryption Visualizer",
     description:
       "Interactive visualization of Cloud KMS key management, HMAC/RSA signing flows, and payload encryption at rest and in transit.",
+    interactionHint: "Sign a financial payload, then verify how tamper detection protects message integrity.",
     techTags: ["Cloud KMS", "HMAC", "RSA", "Node.js"],
     status: "View Demo",
+    preview: {
+      imageSrc: "/demos/encryption-preview.svg",
+      imageAlt: "Diagram style preview of signing and verification flow for encryption visualizer demo",
+      eyebrow: "Security Workflow",
+    },
     proofCategory: "security",
     href: "/demos/encryption-visualizer",
   },
@@ -220,8 +226,14 @@ export const projects: readonly ProjectCard[] = [
     title: "Payment Flow Simulator",
     description:
       "Step-through simulation of a 4-step remittance payment lifecycle — from legacy details inquiry to final payout confirmation.",
+    interactionHint: "Walk each lifecycle state and inspect how backward compatibility is preserved during transitions.",
     techTags: ["REST", "State Machine", "Express.js", "Nodemailer"],
     status: "View Demo",
+    preview: {
+      imageSrc: "/demos/payment-flow-preview.svg",
+      imageAlt: "Timeline style preview for payment flow simulator demo",
+      eyebrow: "Lifecycle Simulation",
+    },
     proofCategory: "ownership",
     href: "/demos/payment-simulator",
   },
@@ -229,8 +241,14 @@ export const projects: readonly ProjectCard[] = [
     title: "API Security Tester",
     description:
       "Live demonstration of request signing, payload encryption, and secure API layer patterns used in production fintech systems.",
+    interactionHint: "Run signed requests and compare accepted versus rejected payload scenarios in real time.",
     techTags: ["HMAC", "Encryption", "IAM", "OAuth2"],
     status: "View Demo",
+    preview: {
+      imageSrc: "/demos/api-security-preview.svg",
+      imageAlt: "Shield and endpoint preview for API security tester demo",
+      eyebrow: "Defense Controls",
+    },
     proofCategory: "security",
     href: "/demos/api-security-tester",
   },
@@ -238,8 +256,14 @@ export const projects: readonly ProjectCard[] = [
     title: "Rate Limiting Simulator",
     description:
       "Interactive comparison of Token Bucket, Fixed Window, and Sliding Window algorithms with live traffic simulation and real-time metrics.",
+    interactionHint: "Switch traffic patterns and watch algorithm behavior under bursts, spikes, and sustained load.",
     techTags: ["Token Bucket", "Express.js", "API Gateway", "DDoS Protection"],
     status: "View Demo",
+    preview: {
+      imageSrc: "/demos/rate-limiter-preview.svg",
+      imageAlt: "Traffic chart style preview for rate limiting simulator demo",
+      eyebrow: "Resilience Lab",
+    },
     proofCategory: "reliability",
     href: "/demos/rate-limiter",
   },
@@ -388,4 +412,3 @@ export const metrics = {
     visualization: "badge" as const,
   },
 };
-

@@ -15,7 +15,7 @@ export default function Hero() {
             Fintech Infrastructure Engineer
           </p>
 
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tightest leading-none text-text-primary">
+          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tightest leading-[0.9] text-text-primary">
             {personalInfo.fullName}
           </h1>
 
@@ -62,7 +62,7 @@ export default function Hero() {
               <TrackedLink
                 key={path.id}
                 href={path.destination}
-                className="rounded-xl border border-border-subtle bg-surface/70 p-4 hover:border-border-strong transition-colors"
+                className="rounded-xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-4 shadow-sm hover:border-[var(--sem-interactive-border-hover)] hover:bg-[var(--sem-interactive-bg-hover)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 eventName="hero_audience_path_click"
                 eventPayload={{ audience: path.audience }}
               >

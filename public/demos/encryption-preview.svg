@@ -1,0 +1,18 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#EAF1FF"/>
+  <rect x="24" y="24" width="1232" height="672" rx="24" fill="#F8FAFF" stroke="#C4D3F8" stroke-width="2"/>
+  <rect x="84" y="108" width="220" height="120" rx="16" fill="#1E3A8A"/>
+  <text x="110" y="160" fill="#EEF4FF" font-size="26" font-family="monospace">payload</text>
+  <rect x="530" y="84" width="220" height="168" rx="16" fill="#0F172A"/>
+  <text x="564" y="146" fill="#93C5FD" font-size="20" font-family="monospace">kms.sign()</text>
+  <text x="564" y="180" fill="#E2E8F0" font-size="20" font-family="monospace">RSA-256</text>
+  <rect x="976" y="108" width="220" height="120" rx="16" fill="#1E3A8A"/>
+  <text x="1005" y="160" fill="#EEF4FF" font-size="26" font-family="monospace">signature</text>
+  <rect x="260" y="438" width="760" height="170" rx="16" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <text x="292" y="494" fill="#0F172A" font-size="28" font-family="sans-serif" font-weight="700">Tamper Detection Check</text>
+  <text x="292" y="540" fill="#334155" font-size="22" font-family="sans-serif">Verify integrity before forwarding payment instructions.</text>
+  <path d="M304 168H498" stroke="#1E3A8A" stroke-width="8" stroke-linecap="round"/>
+  <path d="M750 168H948" stroke="#1E3A8A" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="500" cy="168" r="12" fill="#1E3A8A"/>
+  <circle cx="950" cy="168" r="12" fill="#1E3A8A"/>
+</svg>

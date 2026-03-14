@@ -54,38 +54,44 @@
   --ease-entrance: cubic-bezier(0, 0, 0.2, 1);
 
   /* Semantic runtime tokens: light mode */
-  --sem-primary: var(--blue-600);
-  --sem-primary-hover: var(--blue-700);
-  --sem-primary-muted: oklch(0.94 0.04 258);
-  --sem-primary-subtle: oklch(0.975 0.02 258);
+  --sem-primary: oklch(0.43 0.11 255);
+  --sem-primary-hover: oklch(0.37 0.10 255);
+  --sem-primary-muted: oklch(0.935 0.021 255);
+  --sem-primary-subtle: oklch(0.968 0.011 255);
 
-  --sem-text-primary: oklch(0.24 0.015 260);
-  --sem-text-secondary: oklch(0.43 0.012 260);
-  --sem-text-muted: oklch(0.60 0.01 260);
+  --sem-text-primary: oklch(0.20 0.011 255);
+  --sem-text-secondary: oklch(0.36 0.009 255);
+  --sem-text-muted: oklch(0.53 0.008 255);
   --sem-text-inverse: var(--gray-50);
   --sem-text-link: var(--sem-primary);
   --sem-text-link-hover: var(--sem-primary-hover);
 
-  --sem-background: oklch(0.985 0.004 258);
-  --sem-surface: oklch(0.995 0.003 258);
-  --sem-surface-raised: oklch(0.972 0.005 258);
-  --sem-surface-secondary: oklch(0.96 0.006 258);
-  --sem-surface-overlay: oklch(0.998 0.002 258);
-  --sem-surface-glass: oklch(0.998 0.002 258 / 0.78);
+  --sem-background: oklch(0.979 0.003 255);
+  --sem-surface: oklch(0.994 0.002 255);
+  --sem-surface-raised: oklch(0.978 0.004 255);
+  --sem-surface-secondary: oklch(0.963 0.004 255);
+  --sem-surface-overlay: oklch(0.996 0.002 255);
+  --sem-surface-glass: oklch(0.996 0.002 255 / 0.84);
 
-  --sem-border: oklch(0.90 0.008 258);
-  --sem-border-subtle: oklch(0.95 0.005 258);
-  --sem-border-strong: oklch(0.83 0.014 258);
-  --sem-border-focus: oklch(0.58 0.14 258);
+  --sem-border: oklch(0.86 0.010 255);
+  --sem-border-subtle: oklch(0.92 0.006 255);
+  --sem-border-strong: oklch(0.76 0.016 255);
+  --sem-border-focus: oklch(0.56 0.12 255);
+
+  --sem-interactive-bg: oklch(0.994 0.002 255);
+  --sem-interactive-bg-hover: oklch(0.971 0.006 255);
+  --sem-interactive-border: oklch(0.82 0.016 255);
+  --sem-interactive-border-hover: oklch(0.61 0.082 255);
+  --sem-interactive-focus: oklch(0.56 0.12 255);
 
   --sem-success: var(--green-600);
   --sem-warning: var(--amber-600);
   --sem-error: var(--red-600);
   --sem-info: var(--blue-600);
 
-  --ambient-glow-a: oklch(0.72 0.10 256 / 0.18);
-  --ambient-glow-b: oklch(0.84 0.05 274 / 0.12);
-  --ambient-grid: oklch(0.72 0.01 258 / 0.08);
+  --ambient-glow-a: oklch(0.68 0.07 255 / 0.11);
+  --ambient-glow-b: oklch(0.76 0.03 265 / 0.08);
+  --ambient-grid: oklch(0.66 0.008 255 / 0.05);
 
   color-scheme: light;
 }
@@ -119,6 +125,13 @@
   --color-border-subtle: var(--sem-border-subtle);
   --color-border-strong: var(--sem-border-strong);
   --color-border-focus: var(--sem-border-focus);
+
+  /* Colors: Interactive */
+  --color-interactive-bg: var(--sem-interactive-bg);
+  --color-interactive-bg-hover: var(--sem-interactive-bg-hover);
+  --color-interactive-border: var(--sem-interactive-border);
+  --color-interactive-border-hover: var(--sem-interactive-border-hover);
+  --color-interactive-focus: var(--sem-interactive-focus);
 
   /* Colors: Status */
   --color-success: var(--sem-success);
@@ -241,6 +254,12 @@
   --sem-border-strong: oklch(0.41 0.006 260);
   --sem-border-focus: oklch(0.78 0.01 260);
 
+  --sem-interactive-bg: oklch(0.18 0.004 260);
+  --sem-interactive-bg-hover: oklch(0.22 0.005 260);
+  --sem-interactive-border: oklch(0.41 0.006 260);
+  --sem-interactive-border-hover: oklch(0.78 0.01 260);
+  --sem-interactive-focus: oklch(0.82 0.01 260);
+
   --sem-success: var(--green-500);
   --sem-warning: var(--amber-500);
   --sem-error: var(--red-500);
@@ -285,14 +304,15 @@
   }
 
   body {
+    overflow-x: hidden;
     background-color: var(--sem-background);
     background-image:
-      radial-gradient(circle at 8% 10%, var(--ambient-glow-a) 0%, transparent 42%),
-      radial-gradient(circle at 90% 12%, var(--ambient-glow-b) 0%, transparent 38%),
-      linear-gradient(180deg, color-mix(in oklch, var(--sem-background) 94%, var(--sem-primary-subtle) 6%) 0%, var(--sem-background) 65%),
+      radial-gradient(circle at 10% 8%, var(--ambient-glow-a) 0%, transparent 46%),
+      radial-gradient(circle at 90% 14%, var(--ambient-glow-b) 0%, transparent 44%),
+      linear-gradient(180deg, color-mix(in oklch, var(--sem-background) 95%, var(--sem-primary-subtle) 5%) 0%, var(--sem-background) 68%),
       linear-gradient(90deg, var(--ambient-grid) 1px, transparent 1px),
       linear-gradient(0deg, var(--ambient-grid) 1px, transparent 1px);
-    background-size: auto, auto, auto, 44px 44px, 44px 44px;
+    background-size: auto, auto, auto, 56px 56px, 56px 56px;
     color: var(--sem-text-primary);
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
