@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useEffect, useCallback, useRef, useState } from "react";
+import { useReducer, useEffect, useCallback, useRef, useState, useMemo } from "react";
 import type { RateLimitStrategy, TrafficPattern, SimulatedRequest } from "@/app/lib/types";
 
 type LogEntry = { time: string; message: string; type: "info" | "success" | "error" | "warn" };
@@ -10,6 +10,7 @@ interface RateLimiterState {
   maxRequests: number;
   windowSizeMs: number;
   burstCapacity: number;
+  fixedWindowCount: number;
   isRunning: boolean;
   requests: SimulatedRequest[];
   pattern: TrafficPattern;
@@ -24,29 +25,89 @@ interface RateLimiterState {
   lastRequestTime: number;
 }
 
-const INITIAL_TOKENS = 10;
 const WINDOW_SIZE_MS = 60000; // 1 minute
 const MAX_REQUESTS = 100;
 const BURST_CAPACITY = 15;
 
-const initialState: RateLimiterState = {
-  strategy: "token-bucket",
-  maxRequests: MAX_REQUESTS,
-  windowSizeMs: WINDOW_SIZE_MS,
-  burstCapacity: BURST_CAPACITY,
-  isRunning: false,
-  requests: [],
-  pattern: "normal",
-  tokens: INITIAL_TOKENS,
-  windowStart: Date.now(),
-  requestHistory: [],
-  totalRequests: 0,
-  allowedRequests: 0,
-  blockedRequests: 0,
-  avgResponseTime: 0,
-  logs: [{ time: new Date().toLocaleTimeString(), message: "Rate Limiter initialized. Ready to simulate.", type: "info" }],
-  lastRequestTime: Date.now(),
-};
+interface SimulationPreset {
+  id: string;
+  label: string;
+  description: string;
+  strategy: RateLimitStrategy;
+  pattern: TrafficPattern;
+  maxRequests: number;
+  windowSizeMs: number;
+  burstCapacity: number;
+}
+
+const SIMULATION_PRESETS: readonly SimulationPreset[] = [
+  {
+    id: "public-api-steady",
+    label: "Public API",
+    description: "Balanced traffic for public endpoints.",
+    strategy: "token-bucket",
+    pattern: "normal",
+    maxRequests: 120,
+    windowSizeMs: 60000,
+    burstCapacity: 20,
+  },
+  {
+    id: "partner-batch-burst",
+    label: "Partner Burst",
+    description: "Legitimate burst traffic from integrations.",
+    strategy: "token-bucket",
+    pattern: "burst",
+    maxRequests: 180,
+    windowSizeMs: 60000,
+    burstCapacity: 35,
+  },
+  {
+    id: "internal-services",
+    label: "Internal Services",
+    description: "Simple fixed-window controls for trusted services.",
+    strategy: "fixed-window",
+    pattern: "normal",
+    maxRequests: 90,
+    windowSizeMs: 60000,
+    burstCapacity: 15,
+  },
+  {
+    id: "ddos-defense",
+    label: "DDoS Defense",
+    description: "Strict controls under sustained attack.",
+    strategy: "sliding-window",
+    pattern: "ddos",
+    maxRequests: 70,
+    windowSizeMs: 60000,
+    burstCapacity: 15,
+  },
+];
+
+function createInitialState(): RateLimiterState {
+  const now = Date.now();
+
+  return {
+    strategy: "token-bucket",
+    maxRequests: MAX_REQUESTS,
+    windowSizeMs: WINDOW_SIZE_MS,
+    burstCapacity: BURST_CAPACITY,
+    fixedWindowCount: 0,
+    isRunning: false,
+    requests: [],
+    pattern: "normal",
+    tokens: BURST_CAPACITY,
+    windowStart: now,
+    requestHistory: [],
+    totalRequests: 0,
+    allowedRequests: 0,
+    blockedRequests: 0,
+    avgResponseTime: 0,
+    logs: [{ time: new Date(now).toLocaleTimeString(), message: "Rate Limiter initialized. Ready to simulate.", type: "info" }],
+    lastRequestTime: now,
+  };
+}
+
+const initialState: RateLimiterState = createInitialState();
 
 type Action =
   | { type: "SET_STRATEGY"; payload: RateLimitStrategy }
@@ -54,6 +115,8 @@ type Action =
   | { type: "SET_MAX_REQUESTS"; payload: number }
   | { type: "SET_WINDOW_SIZE"; payload: number }
   | { type: "SET_BURST_CAPACITY"; payload: number }
+  | { type: "SET_FIXED_WINDOW_COUNT"; payload: number }
+  | { type: "APPLY_PRESET"; payload: SimulationPreset }
   | { type: "START_SIMULATION" }
   | { type: "STOP_SIMULATION" }
   | { type: "RESET" }
@@ -67,7 +130,14 @@ type Action =
 function reducer(state: RateLimiterState, action: Action): RateLimiterState {
   switch (action.type) {
     case "SET_STRATEGY":
-      return { ...state, strategy: action.payload, tokens: INITIAL_TOKENS, requestHistory: [], windowStart: Date.now() };
+      return {
+        ...state,
+        strategy: action.payload,
+        tokens: state.burstCapacity,
+        requestHistory: [],
+        fixedWindowCount: 0,
+        windowStart: Date.now(),
+      };
     case "SET_PATTERN":
       return { ...state, pattern: action.payload };
     case "SET_MAX_REQUESTS":
@@ -76,19 +146,48 @@ function reducer(state: RateLimiterState, action: Action): RateLimiterState {
       return { ...state, windowSizeMs: action.payload };
     case "SET_BURST_CAPACITY":
       return { ...state, burstCapacity: action.payload, tokens: Math.min(state.tokens, action.payload) };
+    case "SET_FIXED_WINDOW_COUNT":
+      return { ...state, fixedWindowCount: action.payload };
+    case "APPLY_PRESET": {
+      const now = Date.now();
+      const preset = action.payload;
+      return {
+        ...state,
+        strategy: preset.strategy,
+        pattern: preset.pattern,
+        maxRequests: preset.maxRequests,
+        windowSizeMs: preset.windowSizeMs,
+        burstCapacity: preset.burstCapacity,
+        tokens: preset.burstCapacity,
+        fixedWindowCount: 0,
+        isRunning: false,
+        requests: [],
+        requestHistory: [],
+        totalRequests: 0,
+        allowedRequests: 0,
+        blockedRequests: 0,
+        avgResponseTime: 0,
+        windowStart: now,
+        lastRequestTime: now,
+      };
+    }
     case "START_SIMULATION":
       return { ...state, isRunning: true };
     case "STOP_SIMULATION":
       return { ...state, isRunning: false };
-    case "RESET":
+    case "RESET": {
+      const resetState = createInitialState();
       return {
-        ...initialState,
+        ...resetState,
         strategy: state.strategy,
         maxRequests: state.maxRequests,
         windowSizeMs: state.windowSizeMs,
         burstCapacity: state.burstCapacity,
+        tokens: state.burstCapacity,
         pattern: state.pattern,
+        logs: [{ time: new Date().toLocaleTimeString(), message: "Simulation reset. Ready to simulate.", type: "info" }],
       };
+    }
     case "ADD_REQUEST": {
       const newRequest = action.payload;
       const updatedRequests = [newRequest, ...state.requests].slice(0, 50);
@@ -220,20 +319,21 @@ export default function RateLimiterSimulator() {
         break;
       }
       case "fixed-window": {
-        const windowCount = state.requests.filter(r => r.timestamp > state.windowStart && r.status === "allowed").length;
-        const result = checkFixedWindow(state.windowStart, state.windowSizeMs, windowCount, state.maxRequests);
+        const result = checkFixedWindow(state.windowStart, state.windowSizeMs, state.fixedWindowCount, state.maxRequests);
         allowed = result.allowed;
+        const effectiveWindowStart = result.newWindowStart;
         if (result.newWindowStart !== state.windowStart) {
           dispatch({ type: "UPDATE_WINDOW_START", payload: result.newWindowStart });
         }
-        const windowEnd = Math.floor((state.windowStart + state.windowSizeMs) / 1000);
+        dispatch({ type: "SET_FIXED_WINDOW_COUNT", payload: result.newCount });
+        const windowEnd = Math.floor((effectiveWindowStart + state.windowSizeMs) / 1000);
         headers = {
           "X-RateLimit-Limit": state.maxRequests,
           "X-RateLimit-Remaining": Math.max(0, state.maxRequests - result.newCount),
           "X-RateLimit-Reset": windowEnd,
         };
         if (!allowed) {
-          headers["Retry-After"] = Math.ceil((state.windowStart + state.windowSizeMs - now) / 1000);
+          headers["Retry-After"] = Math.ceil((effectiveWindowStart + state.windowSizeMs - now) / 1000);
         }
         break;
       }
@@ -267,7 +367,7 @@ export default function RateLimiterSimulator() {
     } else {
       addLog(`✗ Request ${request.id.slice(-8)} blocked - 429 Too Many Requests`, "error");
     }
-  }, [state.strategy, state.tokens, state.burstCapacity, state.windowStart, state.windowSizeMs, state.maxRequests, state.requestHistory, state.requests, addLog]);
+  }, [state.strategy, state.tokens, state.burstCapacity, state.windowStart, state.windowSizeMs, state.maxRequests, state.requestHistory, state.fixedWindowCount, addLog]);
 
   // Traffic pattern intervals
   const getPatternInterval = useCallback((pattern: TrafficPattern): number => {
@@ -366,6 +466,35 @@ export default function RateLimiterSimulator() {
     }
   };
 
+  const fixedWindowSecondsRemaining = Math.max(
+    0,
+    Math.ceil((state.windowStart + state.windowSizeMs - currentTime) / 1000),
+  );
+
+  const slidingWindowSecondsRemaining = state.requestHistory.length > 0
+    ? Math.max(0, Math.ceil((state.requestHistory[0] + state.windowSizeMs - currentTime) / 1000))
+    : 0;
+
+  const clientStats = useMemo(() => {
+    const stats = new Map<string, { allowed: number; blocked: number }>();
+
+    for (const request of state.requests) {
+      const current = stats.get(request.clientId) ?? { allowed: 0, blocked: 0 };
+      if (request.status === "allowed") current.allowed += 1;
+      if (request.status === "blocked") current.blocked += 1;
+      stats.set(request.clientId, current);
+    }
+
+    return Array.from(stats.entries())
+      .map(([clientId, counts]) => ({
+        clientId,
+        allowed: counts.allowed,
+        blocked: counts.blocked,
+        total: counts.allowed + counts.blocked,
+      }))
+      .sort((a, b) => b.total - a.total);
+  }, [state.requests]);
+
   return (
     <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-4">
       {/* Control Panel */}
@@ -412,6 +541,26 @@ export default function RateLimiterSimulator() {
               ))}
             </div>
             <p className="text-xs text-text-muted">{getPatternDescription(state.pattern)}</p>
+          </div>
+
+          <div className="space-y-2 mb-6">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-wider">Scenario Presets</label>
+            <div className="grid grid-cols-1 gap-2">
+              {SIMULATION_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => {
+                    dispatch({ type: "APPLY_PRESET", payload: preset });
+                    addLog(`Preset loaded: ${preset.label}`, "info");
+                  }}
+                  disabled={state.isRunning}
+                  className="text-left rounded-xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] px-3 py-2.5 hover:border-[var(--sem-interactive-border-hover)] hover:bg-[var(--sem-interactive-bg-hover)] transition-colors disabled:opacity-50"
+                >
+                  <p className="text-xs font-semibold text-text-primary">{preset.label}</p>
+                  <p className="text-[11px] text-text-muted leading-relaxed">{preset.description}</p>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Settings */}
@@ -485,7 +634,6 @@ export default function RateLimiterSimulator() {
             <button
               onClick={() => {
                 dispatch({ type: "RESET" });
-                addLog("Simulation reset", "info");
               }}
               className="px-4 border border-border-strong h-12 rounded-xl font-bold text-text-secondary hover:bg-surface-secondary transition-all flex items-center justify-center"
             >
@@ -532,6 +680,24 @@ export default function RateLimiterSimulator() {
                   className="h-full bg-primary transition-all duration-300"
                   style={{ width: `${(state.allowedRequests / state.totalRequests) * 100}%` }}
                 />
+              </div>
+            </div>
+          )}
+
+          {clientStats.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-border-subtle">
+              <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Client Fairness Snapshot</p>
+              <div className="space-y-2">
+                {clientStats.slice(0, 4).map((client) => (
+                  <div key={client.clientId} className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface px-3 py-2">
+                    <span className="text-[11px] font-mono text-text-secondary">{client.clientId}</span>
+                    <span className="text-[11px] text-text-muted">
+                      <span className="text-green-500 font-semibold">{client.allowed}</span>
+                      {" / "}
+                      <span className="text-red-500 font-semibold">{client.blocked}</span>
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -593,17 +759,20 @@ export default function RateLimiterSimulator() {
                     {new Date(state.windowStart).toLocaleTimeString()} - {new Date(state.windowStart + state.windowSizeMs).toLocaleTimeString()}
                   </span>
                 </div>
+                <p className="text-xs text-text-muted mb-3">
+                  Reset in <span className="font-semibold text-primary">{fixedWindowSecondsRemaining}s</span>
+                </p>
                 <div className="relative h-8 bg-surface rounded-full overflow-hidden mb-2">
                   <div 
                     className="absolute h-full bg-primary transition-all duration-300"
                     style={{ 
-                      width: `${Math.min(100, (state.requests.filter(r => r.timestamp > state.windowStart && r.status === "allowed").length / state.maxRequests) * 100)}%` 
+                      width: `${Math.min(100, (state.fixedWindowCount / state.maxRequests) * 100)}%` 
                     }}
                   />
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-text-muted">
-                    {state.requests.filter(r => r.timestamp > state.windowStart && r.status === "allowed").length} used
+                    {state.fixedWindowCount} used
                   </span>
                   <span className="text-primary font-bold">{state.maxRequests} limit</span>
                 </div>
@@ -616,6 +785,15 @@ export default function RateLimiterSimulator() {
             <div className="mb-6">
               <div className="bg-surface-secondary/50 rounded-2xl p-6 border-2 border-border-strong">
                 <p className="text-sm font-bold text-text-muted mb-4">Requests in last {state.windowSizeMs / 1000}s window</p>
+                <p className="text-xs text-text-muted mb-3">
+                  {state.requestHistory.length > 0 ? (
+                    <>
+                      Oldest request expires in <span className="font-semibold text-primary">{slidingWindowSecondsRemaining}s</span>
+                    </>
+                  ) : (
+                    "No active requests in current window"
+                  )}
+                </p>
                 <div className="flex gap-1 flex-wrap mb-4">
                   {state.requestHistory.slice(-30).map((ts, i) => {
                     const age = currentTime - ts;

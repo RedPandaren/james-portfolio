@@ -1,0 +1,18 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#EAF4FF"/>
+  <rect x="24" y="24" width="1232" height="672" rx="24" fill="#F8FAFF" stroke="#BFDBFE" stroke-width="2"/>
+  <rect x="100" y="130" width="450" height="460" rx="20" fill="#0F172A"/>
+  <text x="140" y="186" fill="#93C5FD" font-size="24" font-family="monospace">POST /payments/transfer</text>
+  <text x="140" y="244" fill="#E2E8F0" font-size="20" font-family="monospace">x-signature: hmac_sha256(...)</text>
+  <text x="140" y="288" fill="#E2E8F0" font-size="20" font-family="monospace">x-client-id: partner_a</text>
+  <text x="140" y="332" fill="#E2E8F0" font-size="20" font-family="monospace">x-timestamp: 1710413...</text>
+  <rect x="630" y="130" width="550" height="220" rx="20" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2"/>
+  <text x="670" y="196" fill="#0F172A" font-size="30" font-family="sans-serif" font-weight="700">Policy Gate</text>
+  <text x="670" y="246" fill="#334155" font-size="22" font-family="sans-serif">HMAC Valid</text>
+  <text x="670" y="280" fill="#334155" font-size="22" font-family="sans-serif">Role Authorized</text>
+  <rect x="630" y="370" width="550" height="220" rx="20" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2"/>
+  <text x="670" y="436" fill="#0F172A" font-size="30" font-family="sans-serif" font-weight="700">Decision</text>
+  <text x="670" y="486" fill="#1D4ED8" font-size="22" font-family="sans-serif">Accepted or blocked based on signature + IAM checks.</text>
+  <path d="M548 240H616" stroke="#1D4ED8" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="616" cy="240" r="12" fill="#1D4ED8"/>
+</svg>

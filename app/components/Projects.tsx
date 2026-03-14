@@ -1,4 +1,5 @@
 import { projects, perahubNavLink } from "@/app/lib/data";
+import Image from "next/image";
 import ScrollReveal from "./ScrollReveal";
 import TrackedLink from "./TrackedLink";
 
@@ -57,7 +58,7 @@ export default function Projects() {
               <TrackedLink
                 key={journey.id}
                 href={journey.destination}
-                className="rounded-xl border border-border-subtle bg-surface/70 p-5 hover:border-border-strong transition-colors"
+                className="rounded-xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-5 shadow-sm hover:border-[var(--sem-interactive-border-hover)] hover:bg-[var(--sem-interactive-bg-hover)] hover:shadow-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 eventName="proof_path_click"
                 eventPayload={{ journey: journey.title }}
               >
@@ -74,7 +75,7 @@ export default function Projects() {
             <TrackedLink
               id="case-study-perahub"
               href={perahubNavLink.href}
-              className="group block border-2 border-primary/30 rounded-2xl p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300 bg-primary/5"
+              className="group block border-2 border-primary/35 rounded-2xl p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 bg-primary/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               eventName="case_study_opened"
               eventPayload={{ caseStudy: "perahub" }}
             >
@@ -137,14 +138,41 @@ export default function Projects() {
             {projects.map((project) => {
               const CardContent = (
                 <>
+                  <div className="mb-5 overflow-hidden rounded-xl border border-border-subtle bg-primary-subtle/45">
+                    <div className="relative aspect-[16/9]">
+                      <Image
+                        src={project.preview.imageSrc}
+                        alt={project.preview.imageAlt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-surface/95 via-surface/30 to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
+                        <span className="text-[10px] uppercase tracking-[0.16em] text-text-primary bg-surface/90 border border-border-subtle rounded-full px-2.5 py-1 font-semibold">
+                          {project.preview.eyebrow}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-primary bg-primary/10 border border-primary/25 rounded-full px-2.5 py-1 font-bold">
+                          Click to Launch
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Title & Status */}
                   <div className="flex items-start justify-between gap-4 mb-3">
-                    <h3 className="font-semibold text-lg text-text-primary group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h3>
-                    <span className={`text-xs border rounded-full px-3 py-0.5 whitespace-nowrap ${
+                    <div>
+                      <h3 className="font-semibold text-lg text-text-primary group-hover:text-primary transition-colors">
+                        {project.title}
+                      </h3>
+                      <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-primary font-bold">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                        Interactive Demo
+                      </span>
+                    </div>
+                    <span className={`text-xs border rounded-full px-3 py-0.5 whitespace-nowrap font-medium ${
                       project.status === "View Demo" 
-                        ? "border-primary/50 text-primary bg-primary/5" 
+                        ? "border-primary/45 text-primary bg-primary/10" 
                         : "border-border-strong text-text-muted"
                     }`}>
                       {project.status}
@@ -154,6 +182,10 @@ export default function Projects() {
                   {/* Description */}
                   <p className="text-sm text-text-secondary leading-relaxed mb-5">
                     {project.description}
+                  </p>
+
+                  <p className="text-xs text-text-secondary mb-5 rounded-lg border border-border-subtle bg-surface-secondary/55 px-3 py-2.5">
+                    <span className="font-semibold text-text-primary">Try this:</span> {project.interactionHint}
                   </p>
 
                   {/* Tech Tags */}
@@ -169,17 +201,19 @@ export default function Projects() {
                   </div>
 
                   {project.href && (
-                    <div className="mt-auto flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span>{project.status === "View Demo" ? "Start Demo" : "View Project"}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 group-hover:translate-x-1 transition-transform">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                      </svg>
+                    <div className="mt-auto pt-4 border-t border-border-subtle/80 flex items-center justify-between gap-2 text-primary text-xs font-bold uppercase tracking-[0.14em]">
+                      <span>{project.status === "View Demo" ? "Open Interactive Demo" : "View Project"}</span>
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-primary/30 bg-primary/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                      </span>
                     </div>
                   )}
                 </>
               );
 
-              const className = "group border border-border-subtle rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full";
+              const className = "group border border-[var(--sem-interactive-border)] rounded-2xl p-5 sm:p-6 bg-[var(--sem-interactive-bg)] hover:bg-[var(--sem-interactive-bg-hover)] hover:border-[var(--sem-interactive-border-hover)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background";
               const cardId = projectAnchorMap[project.title];
 
               return project.href ? (
