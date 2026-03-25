@@ -4,7 +4,7 @@ import TrackedLink from "./TrackedLink";
 
 export default function Impact() {
   return (
-    <section id="impact" className="py-20 sm:py-32 lg:py-48 px-4 sm:px-8">
+    <section id="impact" data-tour="impact" className="py-20 sm:py-32 lg:py-48 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
         <ScrollReveal>

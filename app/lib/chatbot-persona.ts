@@ -1,5 +1,5 @@
 export const GREETING_RESPONSE =
-  "James Florence Conales is a Fintech-specialized Backend Engineer currently at PETNET, Inc. I can summarize my fintech/security work or dive into specific achievements—what would you like to know?";
+  "Hi, I’m James Florence Conales — a fintech-specialized Backend Engineer at PETNET, Inc. I can summarize my fintech/security work or dive into specific achievements—what would you like to know?";
 
 export function isGreetingMessage(message: string): boolean {
   const text = message.trim().toLowerCase();

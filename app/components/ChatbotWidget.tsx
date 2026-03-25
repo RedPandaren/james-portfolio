@@ -133,6 +133,7 @@ export default function ChatbotWidget() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
+        data-tour="chatbot-launcher"
         className="group fixed bottom-12 right-6 z-40 flex items-center gap-3 rounded-full border border-[var(--sem-border)] bg-[var(--sem-surface)] px-4 py-3 shadow-md backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--sem-border-focus)]"
         aria-expanded={isOpen}
       >

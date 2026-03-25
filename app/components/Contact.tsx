@@ -4,7 +4,7 @@ import TrackedAnchor from "./TrackedAnchor";
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-32 lg:py-48 px-8">
+    <section id="contact" data-tour="contact" className="py-32 lg:py-48 px-8">
       <div className="max-w-7xl mx-auto text-center">
         <ScrollReveal>
           {/* Heading */}
