@@ -45,6 +45,13 @@ export default function ChatbotWidget() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handler = () => setIsOpen(true);
+    window.addEventListener("open-chatbot", handler);
+    return () => window.removeEventListener("open-chatbot", handler);
+  }, []);
+
+  useEffect(() => {
     const id = setInterval(() => setNowTs(Date.now()), 500);
     return () => clearInterval(id);
   }, []);
@@ -134,7 +141,7 @@ export default function ChatbotWidget() {
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         data-tour="chatbot-launcher"
-        className="group fixed bottom-12 right-6 z-40 flex items-center gap-3 rounded-full border border-[var(--sem-border)] bg-[var(--sem-surface)] px-4 py-3 shadow-md backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--sem-border-focus)]"
+        className="group fixed bottom-12 right-6 z-[1600] flex items-center gap-3 rounded-full border border-[var(--sem-border)] bg-[var(--sem-surface)] px-4 py-3 shadow-md backdrop-blur-sm transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--sem-border-focus)]"
         aria-expanded={isOpen}
       >
         <span className="relative flex h-3 w-3 items-center justify-center">
@@ -152,7 +159,7 @@ export default function ChatbotWidget() {
       </button>
 
       <div
-        className={`fixed bottom-32 right-6 z-40 w-[min(380px,calc(100vw-24px))] transform rounded-2xl border border-[var(--sem-border)] bg-[var(--sem-surface-overlay)]/95 shadow-xl backdrop-blur-md transition-all duration-200 ${
+        className={`fixed bottom-32 right-6 z-[1600] w-[min(380px,calc(100vw-24px))] transform rounded-2xl border border-[var(--sem-border)] bg-[var(--sem-surface-overlay)]/95 shadow-xl backdrop-blur-md transition-all duration-200 ${
           isOpen ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-3"
         }`}
       >

@@ -252,7 +252,7 @@ export default function Projects() {
                 </>
               );
 
-              const className = "group border border-[var(--sem-interactive-border)] rounded-2xl p-5 sm:p-6 bg-[var(--sem-interactive-bg)] hover:bg-[var(--sem-interactive-bg-hover)] hover:border-[var(--sem-interactive-border-hover)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+              const className = "group border border-[var(--sem-interactive-border)] rounded-2xl p-5 sm:p-6 bg-[var(--sem-interactive-bg)] hover:bg-[var(--sem-interactive-bg-hover)] hover:border-[var(--sem-interactive-border-hover)] shadow-[0_0_32px_rgba(26,86,219,0.06)] hover:shadow-[0_0_42px_rgba(26,86,219,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sem-interactive-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-background";
               const cardId = projectAnchorMap[project.title];
 
               return project.href ? (
