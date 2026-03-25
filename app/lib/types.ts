@@ -52,6 +52,11 @@ export interface ProjectCard {
   };
   readonly proofCategory?: "security" | "reliability" | "ownership";
   readonly href?: string;
+  readonly metrics?: readonly {
+    readonly label: string;
+    readonly value: string;
+    readonly tone?: "positive" | "neutral";
+  }[];
 }
 
 export interface ProofPath {

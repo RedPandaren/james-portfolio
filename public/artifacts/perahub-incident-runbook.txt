@@ -1,0 +1,24 @@
+Perahub Mobile - Partner Timeout Runbook (Redacted)
+
+Scope
+- Incident: Remittance provider timeout during peak window
+- Impact: Elevated latency + partial failures on payout confirmation
+- Objective: Contain errors, reroute, preserve audit trail
+
+Runbook Steps (T+ timestamps)
+- T+00: Identify provider timeouts in Apigee analytics; freeze non-essential deploys
+- T+02: Enable Sliding Window limiter at 65 req/min per partner client_id
+- T+04: Shift transaction routing to secondary provider with sticky correlation IDs
+- T+06: Invoke circuit breaker; degrade to inquiry-only for impacted corridor
+- T+08: Re-sign payloads with cached KMS keys; verify HMAC for retries
+- T+12: Emit customer-facing status page update and IVR message
+- T+15: Capture traces + headers; export audit log to GCS bucket (redacted)
+
+Verification
+- Error rate < 1% within 15 minutes
+- p95 latency < 300ms on secondary path
+- No lost transactions; all retries carry original idempotency keys
+
+Notes
+- Detailed provider identifiers redacted
+- KMS key references masked; see internal KMS map for actual key IDs

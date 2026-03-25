@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/app/components/ThemeProvider";
+import ChatbotWidget from "@/app/components/ChatbotWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,10 @@ export const metadata: Metadata = {
   title: "James Florence Conales | Software Engineer",
   description:
     "Fintech-specialized Backend Engineer building high-stakes payment infrastructure, secure cloud architecture, and greenfield REST platforms at PETNET, Inc.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
   openGraph: {
     title: "James Florence Conales | Software Engineer",
     description:
@@ -43,7 +48,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <ChatbotWidget />
+        </ThemeProvider>
       </body>
     </html>
   );

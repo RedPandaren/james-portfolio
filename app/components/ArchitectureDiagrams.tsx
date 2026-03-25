@@ -1,159 +1,153 @@
-// "use client";
+import ScrollReveal from "./ScrollReveal";
+import TrackedLink from "./TrackedLink";
 
-// import { useState, useEffect } from "react";
-// import ScrollReveal from "./ScrollReveal";
-// import MermaidDiagram from "./MermaidDiagram";
+type ArchitecturePath = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  anchor: string;
+  accent: "security" | "reliability";
+  steps: { label: string; detail: string }[];
+  highlights: { label: string; value: string }[];
+};
 
-// export default function ArchitectureDiagrams() {
-//   const [isMobile, setIsMobile] = useState(false);
+const paths: ArchitecturePath[] = [
+  {
+    id: "security-path",
+    eyebrow: "Security Path",
+    title: "API Security Control Path",
+    description:
+      "How a signed fintech request moves through Apigee, KMS-backed cryptography, and service-level guards before hitting a partner API.",
+    anchor: "#demo-api-security",
+    accent: "security",
+    steps: [
+      { label: "Client", detail: "Payload signed + timestamped" },
+      { label: "Apigee Edge", detail: "Rate limit, authN, canonical string" },
+      { label: "KMS + Signing", detail: "HMAC/RSA signing, encrypt PII" },
+      { label: "Service Mesh", detail: "State machine validation + RBAC" },
+      { label: "Partner API", detail: "Mutual TLS + replay guard" },
+    ],
+    highlights: [
+      { label: "Threats", value: "Replay, tamper, key sprawl" },
+      { label: "Proof", value: "Run API Security Tester" },
+    ],
+  },
+  {
+    id: "reliability-path",
+    eyebrow: "Reliability Path",
+    title: "Traffic Resilience Path",
+    description:
+      "Resiliency controls from ingress to provider failover, mirroring the Rate Limiting Simulator and Perahub incident runbooks.",
+    anchor: "#demo-rate-limiter",
+    accent: "reliability",
+    steps: [
+      { label: "Traffic Shaper", detail: "Normal, burst, spike patterns" },
+      { label: "Sliding Window", detail: "Adaptive throttling per client" },
+      { label: "State Machine", detail: "Idempotent workflow progression" },
+      { label: "Provider Failover", detail: "Primary → secondary → queue" },
+      { label: "Observability", detail: "p95 latency + error rate" },
+    ],
+    highlights: [
+      { label: "SLO", value: "99.9% availability target" },
+      { label: "Proof", value: "Open Rate Limiter demo" },
+    ],
+  },
+];
 
-//   useEffect(() => {
-//     const checkMobile = () => setIsMobile(window.innerWidth < 768);
-//     checkMobile();
-//     window.addEventListener("resize", checkMobile);
-//     return () => window.removeEventListener("resize", checkMobile);
-//   }, []);
+const accentStyles: Record<ArchitecturePath["accent"], string> = {
+  security: "from-primary/20 via-primary/10 to-transparent border-primary/20",
+  reliability: "from-emerald-500/15 via-emerald-500/8 to-transparent border-emerald-500/20",
+};
 
-//   const microservicesSecurity = `
-//     flowchart TB
-//       Client["Client Application"] --> LB["Load Balancer"]
-//       LB --> Gateway["API Gateway"]
-//       Gateway --> Auth["Auth Service<br/>JWT Validation"]
-//       Auth --> ServiceA["Business Service A"]
-//       Auth --> ServiceB["Business Service B"]
-//       ServiceA --> DB[(Encrypted Database)]
-//       ServiceA --> Cache[(Cache Layer)]
-//       ServiceB --> Secrets[(Secrets Manager)]
-//       ServiceB --> Queue[(Message Queue)]
+export default function ArchitectureDiagrams() {
+  return (
+    <section id="architecture" className="py-24 lg:py-40 px-8">
+      <div className="max-w-7xl mx-auto">
+        <ScrollReveal>
+          <p className="text-sm uppercase tracking-wider text-text-muted mb-4">
+            Architecture & Controls
+          </p>
+          <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-text-primary mb-4">
+            How the platform stays secure and reliable
+          </h2>
+          <p className="text-text-secondary max-w-3xl mb-14">
+            Fast view of the control paths behind the demos: the security chain that signs and encrypts every request, and the reliability chain that keeps service levels steady under volatile traffic.
+          </p>
+        </ScrollReveal>
 
-//       classDef default fill:#ffffff,stroke:#171717,stroke-width:1px,color:#171717
-//       classDef security fill:#f5f5f5,stroke:#171717,stroke-width:1px,stroke-dasharray:5 5,color:#171717
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {paths.map((path) => (
+            <ScrollReveal key={path.id}>
+              <div className="h-full rounded-2xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-6 sm:p-7 shadow-sm hover:border-[var(--sem-interactive-border-hover)] hover:bg-[var(--sem-interactive-bg-hover)] transition-all duration-300">
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary bg-primary/10 px-3 py-1 rounded-full">
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                      {path.eyebrow}
+                    </span>
+                    <h3 className="text-2xl font-semibold text-text-primary leading-tight">
+                      {path.title}
+                    </h3>
+                    <p className="text-sm text-text-secondary leading-relaxed">
+                      {path.description}
+                    </p>
+                  </div>
+                  <TrackedLink
+                    href={path.anchor}
+                    className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary bg-primary/10 border border-primary/25 rounded-full px-3 py-1 mt-1"
+                    eventName="architecture_path_cta"
+                    eventPayload={{ path: path.id }}
+                  >
+                    View demo
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                  </TrackedLink>
+                </div>
 
-//       class Auth,Secrets,LB,Gateway security
-//   `;
+                <div className="relative overflow-hidden rounded-xl border border-border-subtle bg-surface/70">
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${accentStyles[path.accent]} opacity-80 pointer-events-none`}
+                  />
+                  <div className="relative p-5 space-y-5">
+                    <div className="relative pl-4">
+                      <div className="absolute left-[6px] top-1 bottom-1 w-px bg-border-strong/50" />
+                      {path.steps.map((step, index) => (
+                        <div key={step.label} className="relative pl-5 pb-4 last:pb-0">
+                          <span className="absolute left-[-2px] top-1.5 h-3 w-3 rounded-full bg-surface border border-border-strong shadow-sm" />
+                          <p className="text-[13px] font-semibold text-text-primary leading-tight">
+                            {index + 1}. {step.label}
+                          </p>
+                          <p className="text-[12px] text-text-secondary leading-snug mt-0.5">
+                            {step.detail}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
 
-//   const paymentFlow = isMobile ? `
-//     flowchart TB
-//       User["User"] --> Inquiry["Inquiry"]
-//       Inquiry --> Fraud["Fraud Detection"]
-//       Fraud --> Staging["Staging"]
-//       Staging --> OTP["OTP Service"]
-//       OTP --> Partners["Partner APIs"]
-//       Partners --> Settlement["Settlement"]
-//       Settlement --> Audit["Audit Log"]
-
-//       classDef default fill:#ffffff,stroke:#171717,stroke-width:1px,color:#171717
-//       classDef security fill:#f5f5f5,stroke:#171717,stroke-width:1px,stroke-dasharray:5 5,color:#171717
-
-//       class Fraud,Audit security
-//   ` : `
-//     flowchart LR
-//       User --> Inquiry --> FraudDetection --> Staging --> OTP --> PartnerAPIs --> Settlement --> AuditLog
-
-//       classDef default fill:#ffffff,stroke:#171717,stroke-width:1px,color:#171717
-//       classDef security fill:#f5f5f5,stroke:#171717,stroke-width:1px,stroke-dasharray:5 5,color:#171717
-
-//       class FraudDetection,AuditLog security
-//   `;
-
-//   const migration = isMobile ? `
-//     flowchart TB
-//       Laravel["Laravel 4.2"] --> Hybrid["Hybrid Phase"]
-//       Hybrid --> NodeJS["Node.js v22"]
-//       Hybrid --> Timeline["5 Months"]
-
-//       classDef legacy fill:#f5f5f5,stroke:#737373,stroke-width:1px,color:#737373
-//       classDef active fill:#ffffff,stroke:#171717,stroke-width:2px,color:#171717
-//       classDef modern fill:#ffffff,stroke:#171717,stroke-width:1px,color:#171717
-//       classDef meta fill:#fafafa,stroke:#a3a3a3,stroke-width:1px,stroke-dasharray:3 3,color:#525252
-
-//       class Laravel legacy
-//       class Hybrid active
-//       class NodeJS modern
-//       class Timeline meta
-//   ` : `
-//     flowchart LR
-//       Laravel["Laravel 4.2"] --> Hybrid["Hybrid Phase"] --> NodeJS["Node.js v22"]
-//       Hybrid --> Timeline["5 Months"]
-
-//       classDef legacy fill:#f5f5f5,stroke:#737373,stroke-width:1px,color:#737373
-//       classDef active fill:#ffffff,stroke:#171717,stroke-width:2px,color:#171717
-//       classDef modern fill:#ffffff,stroke:#171717,stroke-width:1px,color:#171717
-//       classDef meta fill:#fafafa,stroke:#a3a3a3,stroke-width:1px,stroke-dasharray:3 3,color:#525252
-
-//       class Laravel legacy
-//       class Hybrid active
-//       class NodeJS modern
-//       class Timeline meta
-//   `;
-
-//   return (
-//     <section id="architecture" className="py-20 sm:py-32 lg:py-48 px-4 sm:px-8">
-//       <div className="max-w-7xl mx-auto">
-//         <ScrollReveal>
-//           <p className="text-sm uppercase tracking-wider text-text-muted mb-4">
-//             Technical Architecture
-//           </p>
-//           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter text-text-primary mb-12 sm:mb-16">
-//             System Design
-//           </h2>
-//         </ScrollReveal>
-
-//         <div className="space-y-16">
-//           <ScrollReveal>
-//             <div className="mb-6">
-//               <h3 className="text-xl font-semibold text-text-primary mb-2">
-//                 Defense in Depth: Secure Microservices
-//               </h3>
-//               <p className="text-sm text-text-secondary">
-//                 Industry-standard security architecture with layered defense mechanisms and JWT-based authentication
-//               </p>
-//             </div>
-//             <MermaidDiagram chart={microservicesSecurity} />
-//           </ScrollReveal>
-
-//           <ScrollReveal>
-//             <div className="mb-6">
-//               <h3 className="text-xl font-semibold text-text-primary mb-2">
-//                 Payment Transaction Flow
-//               </h3>
-//               <p className="text-sm text-text-secondary">
-//                 End-to-end transaction lifecycle with fraud detection and compliance tracking
-//               </p>
-//             </div>
-//             <MermaidDiagram chart={paymentFlow} />
-//           </ScrollReveal>
-
-//           <ScrollReveal>
-//             <div className="mb-6">
-//               <h3 className="text-xl font-semibold text-text-primary mb-2">
-//                 Laravel to Node.js Migration
-//               </h3>
-//               <p className="text-sm text-text-secondary">
-//                 5-month strategic migration using Strangler Pattern with 100% stability
-//               </p>
-//             </div>
-//             <MermaidDiagram chart={migration} />
-//           </ScrollReveal>
-//         </div>
-
-//         <ScrollReveal>
-//           <div className="mt-16 text-center">
-//             <p className="text-text-secondary mb-6">
-//               Production-grade fintech architecture with security-first design and zero-downtime migrations.
-//             </p>
-//             <a
-//               href="#contact"
-//               className="inline-flex items-center gap-2 bg-primary text-text-inverse px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
-//             >
-//               Discuss Architecture
-//               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-//               </svg>
-//             </a>
-//           </div>
-//         </ScrollReveal>
-//       </div>
-//     </section>
-//   );
-// }
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {path.highlights.map((item) => (
+                        <div
+                          key={item.label}
+                          className="rounded-lg border border-border-subtle bg-surface/90 px-3.5 py-3"
+                        >
+                          <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-text-muted mb-1">
+                            {item.label}
+                          </p>
+                          <p className="text-sm font-semibold text-text-primary leading-tight">
+                            {item.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

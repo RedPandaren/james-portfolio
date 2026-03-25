@@ -1,0 +1,40 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" rx="32" fill="#0D0F12"/>
+  <rect x="48" y="48" width="1104" height="579" rx="24" fill="#11151B" stroke="#1F2833" stroke-width="2" stroke-dasharray="6 8"/>
+  <rect x="96" y="112" width="340" height="420" rx="20" fill="#121820" stroke="#1F2833" stroke-width="2"/>
+  <rect x="476" y="112" width="628" height="420" rx="20" fill="#121820" stroke="#1F2833" stroke-width="2"/>
+  <text x="120" y="152" fill="#7BD7FF" font-family="'Segoe UI', 'Inter', Arial" font-size="18" font-weight="700" letter-spacing="0.08em">INPUT SIGNALS</text>
+  <text x="500" y="152" fill="#7BD7FF" font-family="'Segoe UI', 'Inter', Arial" font-size="18" font-weight="700" letter-spacing="0.08em">RISK EXPLAINER</text>
+  <g font-family="'Segoe UI', 'Inter', Arial" font-size="16" fill="#DCE7F5">
+    <rect x="120" y="180" width="296" height="52" rx="12" fill="#171E28" stroke="#233041"/>
+    <text x="140" y="212">Corridor: Cross-border</text>
+    <rect x="120" y="248" width="296" height="52" rx="12" fill="#171E28" stroke="#233041"/>
+    <text x="140" y="280">Amount: Medium</text>
+    <rect x="120" y="316" width="296" height="52" rx="12" fill="#171E28" stroke="#233041"/>
+    <text x="140" y="348">Channel: API partner</text>
+    <rect x="120" y="384" width="296" height="52" rx="12" fill="#171E28" stroke="#233041"/>
+    <text x="140" y="416">Velocity: 14 tx/min</text>
+    <rect x="120" y="452" width="296" height="52" rx="12" fill="#171E28" stroke="#233041"/>
+    <text x="140" y="484">Geo mismatch: On</text>
+  </g>
+  <rect x="520" y="190" width="180" height="180" rx="24" fill="#0F1821" stroke="#253041" stroke-width="2"/>
+  <text x="545" y="230" fill="#8EE0B3" font-family="'Segoe UI', 'Inter', Arial" font-size="13" font-weight="700" letter-spacing="0.12em">RISK SCORE</text>
+  <text x="555" y="300" fill="#E5EDF8" font-family="'Segoe UI', 'Inter', Arial" font-size="64" font-weight="700">72</text>
+  <text x="552" y="332" fill="#9FB6CF" font-family="'Segoe UI', 'Inter', Arial" font-size="14">High • Review / Block</text>
+  <g transform="translate(740 190)">
+    <rect x="0" y="0" width="320" height="180" rx="20" fill="#0F1821" stroke="#253041" stroke-width="2"/>
+    <text x="20" y="34" fill="#8EE0B3" font-family="'Segoe UI', 'Inter', Arial" font-size="12" font-weight="700" letter-spacing="0.12em">REASON CODES</text>
+    <text x="20" y="70" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="14">+22 High-risk corridor</text>
+    <text x="20" y="98" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="14">+16 Velocity spike</text>
+    <text x="20" y="126" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="14">+14 Dispute history</text>
+    <text x="20" y="154" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="14">+10 Geo/IP mismatch</text>
+  </g>
+  <g transform="translate(520 400)">
+    <rect x="0" y="0" width="540" height="96" rx="16" fill="#0F1821" stroke="#253041" stroke-width="2"/>
+    <text x="20" y="36" fill="#7BD7FF" font-family="'Segoe UI', 'Inter', Arial" font-size="12" font-weight="700" letter-spacing="0.12em">ACTION</text>
+    <text x="20" y="66" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="16">Manual review / Step-up authentication recommended.</text>
+    <rect x="400" y="28" width="120" height="40" rx="10" fill="#102736" stroke="#2E7EFF" stroke-width="2"/>
+    <text x="420" y="54" fill="#7BD7FF" font-family="'Segoe UI', 'Inter', Arial" font-size="13" font-weight="700">COMPLIANT</text>
+  </g>
+  <text x="96" y="86" fill="#DCE7F5" font-family="'Segoe UI', 'Inter', Arial" font-size="20" font-weight="700">Fraud Signal Explainer — Simulated, NDA-safe</text>
+</svg>

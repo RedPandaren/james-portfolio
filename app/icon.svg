@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cute red panda icon">
+  <rect width="64" height="64" rx="14" fill="#f8fafc"/>
+  <circle cx="20" cy="20" r="8" fill="#5b3a2a"/>
+  <circle cx="44" cy="20" r="8" fill="#5b3a2a"/>
+  <circle cx="20" cy="20" r="4" fill="#f2c7a8"/>
+  <circle cx="44" cy="20" r="4" fill="#f2c7a8"/>
+  <ellipse cx="32" cy="36" rx="20" ry="18" fill="#d65a36"/>
+  <ellipse cx="32" cy="42" rx="14" ry="11" fill="#fff7ed"/>
+  <path d="M14 30C18 24 24 22 32 22C40 22 46 24 50 30C46 30 42 32 39 36C36 34 34 33 32 33C30 33 28 34 25 36C22 32 18 30 14 30Z" fill="#fff7ed"/>
+  <ellipse cx="24" cy="33" rx="4" ry="5" fill="#5b3a2a"/>
+  <ellipse cx="40" cy="33" rx="4" ry="5" fill="#5b3a2a"/>
+  <circle cx="25" cy="33" r="1.4" fill="#ffffff"/>
+  <circle cx="41" cy="33" r="1.4" fill="#ffffff"/>
+  <ellipse cx="32" cy="40" rx="2.4" ry="1.8" fill="#3f2a1d"/>
+  <path d="M29 43C30 45 31.2 46 32 46C32.8 46 34 45 35 43" stroke="#3f2a1d" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <circle cx="20" cy="40" r="2" fill="#f6a082"/>
+  <circle cx="44" cy="40" r="2" fill="#f6a082"/>
+</svg>

@@ -1,0 +1,20 @@
+Decision Log - Perahub Platform (Redacted)
+
+Context
+- Migration from legacy remittance stack to modern Node.js + Apigee edge
+- Need to protect contracts, latency, and security posture
+
+Decisions
+- Rate limiting: Sliding Window for fairness; token bucket for burst-friendly partners
+- Crypto: Google Cloud KMS for signing/encryption; no self-managed HSM to reduce ops risk
+- API Gateway: Apigee chosen for policy control and analytics; avoids bespoke middleware drift
+- State machines: Explicit transaction states to prevent double-settlement and ease retries
+- Observability: GCP Log Explorer with correlation IDs across gateway → services → partners
+
+Outcomes
+- 100% contract stability through cutover
+- 25% latency reduction after gateway + runtime shift
+- Incident MTTR lowered with standardized runbooks and traceable IDs
+
+Redactions
+- Partner names, contract terms, and key IDs removed for NDA compliance
