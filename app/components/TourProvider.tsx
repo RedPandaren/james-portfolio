@@ -93,6 +93,13 @@ export default function TourProvider({ children }: { children: React.ReactNode }
   const [spotlight, setSpotlight] = useState<SpotlightRect>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
+  // Focus the modal when it opens
+  useEffect(() => {
+    if (isOpen && overlayRef.current) {
+      overlayRef.current.focus({ preventScroll: true });
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     setIsMounted(true);
     if (typeof window === "undefined") return;
@@ -201,22 +208,26 @@ export default function TourProvider({ children }: { children: React.ReactNode }
   const isLast = currentIndex === stepCount - 1;
 
   const overlay = show ? (
-    <div className="fixed inset-0 z-[1000000] pointer-events-auto">
+    <div className="fixed inset-0 z-[1000000] pointer-events-auto tour-layer">
       <style>
         {`
-          .tour-spotlight {
+          .tour-layer {
+            background: color-mix(in oklch, var(--sem-background) 10%, transparent 90%);
+          }
+          .tour-hole {
             position: fixed;
             border-radius: 14px;
-            box-shadow: 0 0 0 3px color-mix(in oklch, var(--sem-primary) 65%, transparent 35%);
+            background: transparent;
+            mix-blend-mode: normal;
             pointer-events: none;
             z-index: 1000002;
+            box-shadow: 0 0 0 0 rgba(0,0,0,0);
           }
         `}
       </style>
-      <div className="absolute inset-0 bg-transparent pointer-events-none" />
       {spotlight ? (
         <div
-          className="tour-spotlight"
+          className="tour-hole"
           style={{
             top: spotlight.top,
             left: spotlight.left,
@@ -231,11 +242,22 @@ export default function TourProvider({ children }: { children: React.ReactNode }
       >
         <div
           ref={overlayRef}
-          className={`rounded-2xl border border-[var(--sem-border)] bg-[var(--sem-surface)] text-[var(--sem-text-primary)] shadow-xl p-4 sm:p-5 max-w-[320px] w-full ${
+          className={`rounded-2xl border border-[var(--sem-border)] bg-[var(--sem-surface)] text-[var(--sem-text-primary)] shadow-xl p-4 sm:p-5 max-w-[360px] w-full ${
             "transition-transform duration-200"
           } pointer-events-auto`}
           style={{ position: "relative", zIndex: 1000001 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={step.title}
+          tabIndex={-1}
         >
+          <div className="mb-3 h-1 w-full overflow-hidden rounded-full bg-[var(--sem-border-subtle)]">
+            <div
+              className="h-full bg-[var(--sem-primary)] transition-all duration-300"
+              style={{ width: `${Math.round(((currentIndex + 1) / stepCount) * 100)}%` }}
+              aria-hidden="true"
+            />
+          </div>
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="space-y-1">
               <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--sem-text-muted)] font-semibold">
@@ -253,7 +275,9 @@ export default function TourProvider({ children }: { children: React.ReactNode }
             </button>
           </div>
 
-          <p className="text-sm text-[var(--sem-text-secondary)] leading-relaxed mb-3">{step.body}</p>
+          <p className="text-sm text-[var(--sem-text-secondary)] leading-relaxed mb-3" aria-live="polite">
+            {step.body}
+          </p>
 
           <div className="mt-4 flex items-center justify-between gap-2">
             <button
