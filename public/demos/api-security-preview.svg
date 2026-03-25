@@ -1,18 +1,40 @@
-<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1280" height="720" fill="#EAF4FF"/>
-  <rect x="24" y="24" width="1232" height="672" rx="24" fill="#F8FAFF" stroke="#BFDBFE" stroke-width="2"/>
-  <rect x="100" y="130" width="450" height="460" rx="20" fill="#0F172A"/>
-  <text x="140" y="186" fill="#93C5FD" font-size="24" font-family="monospace">POST /payments/transfer</text>
-  <text x="140" y="244" fill="#E2E8F0" font-size="20" font-family="monospace">x-signature: hmac_sha256(...)</text>
-  <text x="140" y="288" fill="#E2E8F0" font-size="20" font-family="monospace">x-client-id: partner_a</text>
-  <text x="140" y="332" fill="#E2E8F0" font-size="20" font-family="monospace">x-timestamp: 1710413...</text>
-  <rect x="630" y="130" width="550" height="220" rx="20" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2"/>
-  <text x="670" y="196" fill="#0F172A" font-size="30" font-family="sans-serif" font-weight="700">Policy Gate</text>
-  <text x="670" y="246" fill="#334155" font-size="22" font-family="sans-serif">HMAC Valid</text>
-  <text x="670" y="280" fill="#334155" font-size="22" font-family="sans-serif">Role Authorized</text>
-  <rect x="630" y="370" width="550" height="220" rx="20" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2"/>
-  <text x="670" y="436" fill="#0F172A" font-size="30" font-family="sans-serif" font-weight="700">Decision</text>
-  <text x="670" y="486" fill="#1D4ED8" font-size="22" font-family="sans-serif">Accepted or blocked based on signature + IAM checks.</text>
-  <path d="M548 240H616" stroke="#1D4ED8" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="616" cy="240" r="12" fill="#1D4ED8"/>
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" rx="32" fill="#0D0F12"/>
+  <rect x="48" y="48" width="1104" height="579" rx="24" fill="#11151B" stroke="#1F2833" stroke-width="2" stroke-dasharray="6 8"/>
+  <rect x="92" y="110" width="480" height="430" rx="20" fill="#121820" stroke="#1F2833" stroke-width="2"/>
+  <rect x="628" y="110" width="480" height="430" rx="20" fill="#121820" stroke="#1F2833" stroke-width="2"/>
+  <text x="116" y="148" fill="#7BD7FF" font-family="'Segoe UI','Inter',Arial" font-size="18" font-weight="700" letter-spacing="0.12em">SIGNED REQUEST</text>
+  <text x="652" y="148" fill="#7BD7FF" font-family="'Segoe UI','Inter',Arial" font-size="18" font-weight="700" letter-spacing="0.12em">VERIFICATION</text>
+
+  <g font-family="'Segoe UI','Inter',Arial" font-size="15" fill="#DCE7F5">
+    <rect x="124" y="184" width="416" height="72" rx="16" fill="#0F1821" stroke="#233041"/>
+    <text x="148" y="218">POST /transfer</text>
+    <text x="148" y="242" fill="#9FB6CF">x-signature: 4fb2…fe12 • nonce: 1698429932</text>
+
+    <rect x="124" y="270" width="416" height="72" rx="16" fill="#0F1821" stroke="#233041"/>
+    <text x="148" y="304">payload hash: 54ab…19c3</text>
+    <text x="148" y="328" fill="#9FB6CF">digest: SHA-256 • body length: 512B</text>
+
+    <rect x="124" y="356" width="416" height="72" rx="16" fill="#0F1821" stroke="#233041"/>
+    <text x="148" y="390" fill="#8EE0B3" font-weight="700">HMAC-SHA256 (KMS)</text>
+    <text x="148" y="414" fill="#9FB6CF">key id: kms-live-api • mTLS required</text>
+
+    <rect x="124" y="442" width="416" height="72" rx="16" fill="#0F1821" stroke="#233041"/>
+    <text x="148" y="476">replay window: 30s • clock skew: ±60s</text>
+  </g>
+
+  <rect x="660" y="186" width="376" height="96" rx="18" fill="#0F1821" stroke="#233041" stroke-width="2"/>
+  <text x="686" y="224" fill="#8EE0B3" font-family="'Segoe UI','Inter',Arial" font-size="16" font-weight="700" letter-spacing="0.12em">SIGNATURE VALID</text>
+  <text x="686" y="252" fill="#9FB6CF" font-family="'Segoe UI','Inter',Arial" font-size="14">nonce unseen • timestamp fresh • payload intact</text>
+
+  <rect x="660" y="304" width="376" height="88" rx="18" fill="#0F1821" stroke="#233041" stroke-width="2"/>
+  <text x="686" y="338" fill="#DCE7F5" font-family="'Segoe UI','Inter',Arial" font-size="15" font-weight="700">POLICIES</text>
+  <text x="686" y="362" fill="#9FB6CF" font-family="'Segoe UI','Inter',Arial" font-size="14">mTLS • KMS-backed keys • replay protection • RBAC</text>
+
+  <rect x="660" y="412" width="376" height="112" rx="18" fill="#0F1821" stroke="#233041" stroke-width="2"/>
+  <text x="686" y="448" fill="#DCE7F5" font-family="'Segoe UI','Inter',Arial" font-size="15" font-weight="700">AUDIT TRAIL</text>
+  <text x="686" y="474" fill="#9FB6CF" font-family="'Segoe UI','Inter',Arial" font-size="14">req id: req_98231 • status: allowed</text>
+  <text x="686" y="498" fill="#9FB6CF" font-family="'Segoe UI','Inter',Arial" font-size="14">trace: apigw-asia-sg → service-mesh → signer</text>
+
+  <text x="96" y="90" fill="#DCE7F5" font-family="'Segoe UI','Inter',Arial" font-size="20" font-weight="700">API Security Tester — Signed Requests</text>
 </svg>

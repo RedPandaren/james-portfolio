@@ -214,6 +214,11 @@ export const projects: readonly ProjectCard[] = [
     interactionHint: "Sign a financial payload, then verify how tamper detection protects message integrity.",
     techTags: ["Cloud KMS", "HMAC", "RSA", "Node.js"],
     status: "View Demo",
+    metrics: [
+      { label: "Tamper catches", value: "100% on unsigned payloads", tone: "positive" },
+      { label: "Crypto path", value: "KMS-backed keys" },
+      { label: "Latency overhead", value: "+28ms signing" },
+    ],
     preview: {
       imageSrc: "/demos/encryption-preview.svg",
       imageAlt: "Diagram style preview of signing and verification flow for encryption visualizer demo",
@@ -229,6 +234,11 @@ export const projects: readonly ProjectCard[] = [
     interactionHint: "Walk each lifecycle state and inspect how backward compatibility is preserved during transitions.",
     techTags: ["REST", "State Machine", "Express.js", "Nodemailer"],
     status: "View Demo",
+    metrics: [
+      { label: "States tracked", value: "4-stage lifecycle" },
+      { label: "Rollback safety", value: "0 contract breaks", tone: "positive" },
+      { label: "Notif window", value: "<2s callbacks" },
+    ],
     preview: {
       imageSrc: "/demos/payment-flow-preview.svg",
       imageAlt: "Timeline style preview for payment flow simulator demo",
@@ -244,6 +254,11 @@ export const projects: readonly ProjectCard[] = [
     interactionHint: "Run signed requests and compare accepted versus rejected payload scenarios in real time.",
     techTags: ["HMAC", "Encryption", "IAM", "OAuth2"],
     status: "View Demo",
+    metrics: [
+      { label: "Rejected attempts", value: "100% unsigned", tone: "positive" },
+      { label: "Auth layers", value: "HMAC + OAuth2" },
+      { label: "Audit trail", value: "Replay-proof" },
+    ],
     preview: {
       imageSrc: "/demos/api-security-preview.svg",
       imageAlt: "Shield and endpoint preview for API security tester demo",
@@ -253,12 +268,37 @@ export const projects: readonly ProjectCard[] = [
     href: "/demos/api-security-tester",
   },
   {
+    title: "Fraud Signal Explainer",
+    description:
+      "Simulated fraud-risk scoring for remittance/payment flows with transparent signal weighting and explainable outputs.",
+    interactionHint: "Adjust corridor, velocity, device trust, and disputes to see risk score and reason codes update.",
+    techTags: ["Fraud", "Explainability", "Synthetic"],
+    status: "View Demo",
+    metrics: [
+      { label: "Signals modeled", value: "6 factors" },
+      { label: "Decision speed", value: "<120ms scoring" },
+      { label: "Explainability", value: "Reason codes on change", tone: "positive" },
+    ],
+    preview: {
+      imageSrc: "/demos/fraud-signal-preview.svg",
+      imageAlt: "Preview of fraud signal explainer showing inputs, score, and reason codes",
+      eyebrow: "Security Decisioning",
+    },
+    proofCategory: "security",
+    href: "/demos/fraud-signal-explainer",
+  },
+  {
     title: "Rate Limiting Simulator",
     description:
       "Interactive comparison of Token Bucket, Fixed Window, and Sliding Window algorithms with live traffic simulation and real-time metrics.",
     interactionHint: "Switch traffic patterns and watch algorithm behavior under bursts, spikes, and sustained load.",
     techTags: ["Token Bucket", "Express.js", "API Gateway", "DDoS Protection"],
     status: "View Demo",
+    metrics: [
+      { label: "Algorithms", value: "3 side-by-side" },
+      { label: "Burst survival", value: ">95% allowed on slope", tone: "positive" },
+      { label: "p95 latency", value: "<240ms under load" },
+    ],
     preview: {
       imageSrc: "/demos/rate-limiter-preview.svg",
       imageAlt: "Traffic chart style preview for rate limiting simulator demo",

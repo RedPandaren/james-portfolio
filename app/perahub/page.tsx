@@ -765,6 +765,76 @@ export default function PerahubPage() {
         </div>
       </section>
 
+      {/* Proof Artifacts Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-8 border-t border-border-subtle/50 bg-surface-secondary/20">
+        <div className="max-w-6xl mx-auto">
+          <ScrollReveal>
+            <div className="flex flex-col gap-3 mb-8">
+              <p className="text-sm uppercase tracking-wider text-text-muted">Proof Artifacts</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-text-primary">Operational evidence (redacted)</h2>
+              <p className="text-text-secondary max-w-3xl">
+                Runbooks, migration excerpts, and decision logs that mirror the Perahub delivery constraints. Sensitive identifiers redacted for compliance.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <ScrollReveal>
+              <a
+                href="/artifacts/perahub-incident-runbook.txt"
+                className="block rounded-2xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-5 hover:border-primary/50 transition"
+              >
+                <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-primary mb-2">Incident Runbook</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Partner Timeout (redacted)</h3>
+                <p className="text-sm text-text-secondary">Step-by-step response for provider 5xx spikes; includes throttling, failover, and audit export.</p>
+              </a>
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <a
+                href="/artifacts/perahub-migration-plan-excerpt.txt"
+                className="block rounded-2xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-5 hover:border-primary/50 transition"
+              >
+                <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-primary mb-2">Migration Plan</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Laravel 4.2 → Node.js 22</h3>
+                <p className="text-sm text-text-secondary">Strangler milestones, contract tests, and risk controls for a 5-month cutover.</p>
+              </a>
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <a
+                href="/artifacts/perahub-decision-log.txt"
+                className="block rounded-2xl border border-[var(--sem-interactive-border)] bg-[var(--sem-interactive-bg)] p-5 hover:border-primary/50 transition"
+              >
+                <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-primary mb-2">Decision Log</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Architecture trade-offs</h3>
+                <p className="text-sm text-text-secondary">Gateway choice, crypto, state machines, and observability reasoning with outcomes.</p>
+              </a>
+            </ScrollReveal>
+          </div>
+
+          <ScrollReveal>
+            <div className="mt-8 rounded-2xl border border-border-subtle bg-surface px-4 sm:px-6 py-4">
+              <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-text-muted mb-2">Decision Timeline</p>
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div className="rounded-xl bg-primary/5 border border-primary/15 px-4 py-3">
+                  <p className="text-xs font-semibold text-text-primary">Month 1-2</p>
+                  <p className="text-[12px] text-text-secondary">Shadow traffic + contract diff tests; no customer impact.</p>
+                </div>
+                <div className="rounded-xl bg-primary/5 border border-primary/15 px-4 py-3">
+                  <p className="text-xs font-semibold text-text-primary">Month 3-4</p>
+                  <p className="text-[12px] text-text-secondary">Write paths behind flags; dual-write and rollback-ready.</p>
+                </div>
+                <div className="rounded-xl bg-primary/5 border border-primary/15 px-4 py-3">
+                  <p className="text-xs font-semibold text-text-primary">Month 5</p>
+                  <p className="text-[12px] text-text-secondary">Final cutover, freeze window, decommission legacy queues.</p>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* User Journey Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-8 border-t border-border-subtle/50 bg-border-subtle/10">
         <div className="max-w-6xl mx-auto">

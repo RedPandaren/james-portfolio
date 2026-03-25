@@ -8,6 +8,7 @@ const projectAnchorMap: Record<string, string> = {
   "Payment Flow Simulator": "demo-payment-flow",
   "API Security Tester": "demo-api-security",
   "Rate Limiting Simulator": "demo-rate-limiter",
+  "Fraud Signal Explainer": "demo-fraud-signal",
 };
 
 const proofJourneys = [
@@ -102,6 +103,24 @@ export default function Projects() {
                 of backend systems, including Laravel 4.2 → Node.js 22 migration and GCP CloudRun deployment.
               </p>
 
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 max-w-4xl">
+                <div className="rounded-xl border border-primary/35 bg-primary/8 px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-1">Uptime</p>
+                  <p className="text-lg font-bold text-text-primary">99.9%</p>
+                  <p className="text-[11px] text-text-secondary">Internal SLA maintained</p>
+                </div>
+                <div className="rounded-xl border border-primary/25 bg-primary/6 px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-1">Contract Stability</p>
+                  <p className="text-lg font-bold text-text-primary">100%</p>
+                  <p className="text-[11px] text-text-secondary">EMI migration preserved</p>
+                </div>
+                <div className="rounded-xl border border-primary/25 bg-primary/6 px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-1">Latency Improvement</p>
+                  <p className="text-lg font-bold text-text-primary">-25%</p>
+                  <p className="text-[11px] text-text-secondary">Laravel → Node.js shift</p>
+                </div>
+              </div>
+
               {/* Tech Tags */}
               <div className="flex flex-wrap gap-2">
                 <span className="font-mono text-xs border border-primary/50 text-primary bg-primary/10 rounded-full px-2.5 py-0.5">
@@ -187,6 +206,26 @@ export default function Projects() {
                   <p className="text-xs text-text-secondary mb-5 rounded-lg border border-border-subtle bg-surface-secondary/55 px-3 py-2.5">
                     <span className="font-semibold text-text-primary">Try this:</span> {project.interactionHint}
                   </p>
+
+                  {project.metrics && project.metrics.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+                      {project.metrics.map((metric) => (
+                        <div
+                          key={metric.label}
+                          className={`rounded-lg border px-3 py-2.5 text-[11px] leading-snug bg-surface/80 ${
+                            metric.tone === "positive"
+                              ? "border-primary/35 text-text-primary"
+                              : "border-border-subtle text-text-secondary"
+                          }`}
+                        >
+                          <p className="uppercase tracking-[0.14em] font-semibold text-[10px] text-text-muted mb-1">
+                            {metric.label}
+                          </p>
+                          <p className="font-semibold text-text-primary">{metric.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Tech Tags */}
                   <div className="flex flex-wrap gap-2 mb-6">

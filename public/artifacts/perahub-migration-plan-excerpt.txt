@@ -1,0 +1,22 @@
+Perahub Migration Plan - Laravel 4.2 to Node.js 22 (Excerpt)
+
+Goal
+- Strangler migration maintaining 100% API contract stability for third-party vendors.
+
+Workstreams
+- Service slicing: carve inquiry → auth → payout as isolated facades
+- Compatibility: Apigee transforms to preserve legacy headers + envelopes
+- Data: dual-write to legacy + new stores during shadow period
+- Observability: header-level trace IDs mapped across both stacks
+
+Milestones (5-month cadence)
+- Month 1: Shadow traffic + contract diff tests; no customer impact
+- Month 2: Partial cutover for inquiry/read-only endpoints
+- Month 3: Write paths behind feature flags; rollback-ready
+- Month 4: Decommission legacy cron jobs; move to Cloud Run scheduled tasks
+- Month 5: Final cutover; freeze window; clean-up legacy queues
+
+Risk Controls
+- Idempotency keys enforced on both stacks
+- Contract snapshot tests per partner API (redacted fixtures)
+- KMS-backed signing preserved across legacy + new services
