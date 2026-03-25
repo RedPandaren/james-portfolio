@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { navLinks, perahubNavLink } from "@/app/lib/data";
 import { useTheme } from "@/app/components/ThemeProvider";
+import { useTour } from "@/app/components/TourProvider";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme, mounted } = useTheme();
+  const { startTour } = useTour();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -49,6 +51,13 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => startTour(true)}
+            className="hidden sm:inline-flex items-center rounded-full border border-border-subtle bg-surface px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-primary hover:text-primary transition"
+          >
+            Take a tour
+          </button>
           {/* Theme Toggle */}
           <button
             type="button"

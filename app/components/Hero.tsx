@@ -3,7 +3,10 @@ import TrackedLink from "@/app/components/TrackedLink";
 
 export default function Hero() {
   return (
-    <section className="min-h-[92vh] flex items-center pt-32 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-8 relative overflow-hidden">
+    <section
+      data-tour="hero"
+      className="min-h-[92vh] flex items-center pt-32 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-8 relative overflow-hidden"
+    >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-primary/12 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
