@@ -93,6 +93,17 @@
   --ambient-glow-b: oklch(0.76 0.03 265 / 0.08);
   --ambient-grid: oklch(0.66 0.008 255 / 0.05);
 
+  /* Background layers (light) */
+  --bg-gradient-top: #f8fafc;
+  --bg-gradient-bottom: #eef1f6;
+  --bg-glow-a: oklch(0.92 0.018 255 / 0.14);
+  --bg-glow-b: oklch(0.90 0.015 255 / 0.12);
+  --bg-grid-color: oklch(0.74 0.004 255 / 0.035);
+  --bg-grid-size: 180px;
+  --bg-tilt: linear-gradient(135deg, oklch(0.90 0.016 255 / 0.10) 0%, transparent 40%, transparent 70%, oklch(0.88 0.014 255 / 0.12) 100%);
+  --bg-vignette: radial-gradient(140% 120% at 50% 42%, transparent 38%, rgba(8, 14, 26, 0.07) 100%);
+  --bg-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><rect width='1' height='1' fill='%23000' fill-opacity='0.02'/><rect x='20' y='10' width='1' height='1' fill='%23000' fill-opacity='0.018'/><rect x='40' y='40' width='1' height='1' fill='%23000' fill-opacity='0.02'/><rect x='60' y='25' width='1' height='1' fill='%23000' fill-opacity='0.018'/><rect x='10' y='55' width='1' height='1' fill='%23000' fill-opacity='0.02'/></svg>");
+
   color-scheme: light;
 }
 
@@ -269,6 +280,17 @@
   --ambient-glow-b: oklch(0.25 0.008 260 / 0.12);
   --ambient-grid: oklch(0.50 0.004 260 / 0.07);
 
+  /* Background layers (dark) */
+  --bg-gradient-top: #050505;
+  --bg-gradient-bottom: #0a0a0a;
+  --bg-glow-a: oklch(0.20 0.008 255 / 0.12);
+  --bg-glow-b: oklch(0.16 0.008 255 / 0.10);
+  --bg-grid-color: oklch(0.32 0.002 260 / 0.035);
+  --bg-grid-size: 180px;
+  --bg-tilt: linear-gradient(135deg, oklch(0.14 0.006 255 / 0.16) 0%, transparent 42%, transparent 70%, oklch(0.12 0.006 260 / 0.14) 100%);
+  --bg-vignette: radial-gradient(140% 120% at 50% 42%, transparent 30%, rgba(0, 0, 0, 0.36) 100%);
+  --bg-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><rect width='1' height='1' fill='%23fff' fill-opacity='0.012'/><rect x='20' y='10' width='1' height='1' fill='%23fff' fill-opacity='0.01'/><rect x='40' y='40' width='1' height='1' fill='%23fff' fill-opacity='0.012'/><rect x='60' y='25' width='1' height='1' fill='%23fff' fill-opacity='0.01'/><rect x='10' y='55' width='1' height='1' fill='%23fff' fill-opacity='0.012'/></svg>");
+
   --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.3);
   --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.4);
   --shadow-md: 0 4px 8px -1px oklch(0 0 0 / 0.5), 0 2px 4px -1px oklch(0 0 0 / 0.3);
@@ -307,12 +329,24 @@
     overflow-x: hidden;
     background-color: var(--sem-background);
     background-image:
-      radial-gradient(circle at 10% 8%, var(--ambient-glow-a) 0%, transparent 46%),
-      radial-gradient(circle at 90% 14%, var(--ambient-glow-b) 0%, transparent 44%),
-      linear-gradient(180deg, color-mix(in oklch, var(--sem-background) 95%, var(--sem-primary-subtle) 5%) 0%, var(--sem-background) 68%),
-      linear-gradient(90deg, var(--ambient-grid) 1px, transparent 1px),
-      linear-gradient(0deg, var(--ambient-grid) 1px, transparent 1px);
-    background-size: auto, auto, auto, 56px 56px, 56px 56px;
+      var(--bg-noise),
+      var(--bg-vignette),
+      radial-gradient(120% 80% at 18% 14%, var(--bg-glow-a), transparent 60%),
+      radial-gradient(110% 80% at 82% 78%, var(--bg-glow-b), transparent 58%),
+      var(--bg-tilt),
+      linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%),
+      linear-gradient(90deg, var(--bg-grid-color) 1px, transparent 1px),
+      linear-gradient(0deg, var(--bg-grid-color) 1px, transparent 1px);
+    background-size:
+      220px 220px,
+      140% 140%,
+      130% 90%,
+      130% 90%,
+      140% 140%,
+      auto,
+      var(--bg-grid-size) var(--bg-grid-size),
+      var(--bg-grid-size) var(--bg-grid-size);
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
     color: var(--sem-text-primary);
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;

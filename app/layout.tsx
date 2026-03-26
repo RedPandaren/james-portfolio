@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "James Florence Conales | Software Engineer",
+  title: "James Conales | Software Engineer",
   description:
     "Fintech-specialized Backend Engineer building high-stakes payment infrastructure, secure cloud architecture, and greenfield REST platforms at PETNET, Inc.",
   icons: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     shortcut: "/icon.svg",
   },
   openGraph: {
-    title: "James Florence Conales | Software Engineer",
+    title: "James Conales | Software Engineer",
     description:
       "Fintech-specialized Backend Engineer building high-stakes payment infrastructure and secure cloud architecture.",
     type: "website",
