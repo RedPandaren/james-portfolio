@@ -1,5 +1,4 @@
-import { readFile } from "fs/promises";
-import path from "path";
+import resumeData from "@/specs/Resume/resume.json";
 
 type ResumeJson = {
   personalInfo?: {
@@ -62,14 +61,7 @@ type ResumeContext = {
   contextText: string;
 };
 
-const resumePath = path.join(process.cwd(), "specs", "Resume", "resume.json");
-
 let cachedContext: ResumeContext | null = null;
-
-async function readResumeJson(): Promise<ResumeJson> {
-  const file = await readFile(resumePath, "utf8");
-  return JSON.parse(file) as ResumeJson;
-}
 
 function joinList(
   items: Array<string | undefined> | undefined,
@@ -146,8 +138,10 @@ function buildContextText(resume: ResumeJson): string {
 
 export async function getResumeContext(): Promise<ResumeContext> {
   if (cachedContext) return cachedContext;
-
-  const resumeJson = await readResumeJson();
+  const resumeJson = resumeData as ResumeJson;
+  if (!resumeJson || Object.keys(resumeJson).length === 0) {
+    throw Object.assign(new Error("resume_data_missing"), { status: 500 });
+  }
   const contextText = buildContextText(resumeJson);
 
   cachedContext = { contextText };
