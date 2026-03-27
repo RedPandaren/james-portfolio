@@ -24,15 +24,38 @@ type ResumeJson = {
     major?: string;
     honors?: string;
   }>;
-  technicalSkills?: Record<string, Record<string, string[]>> | {
-    backendArchitecture?: { core?: string[]; designPatterns?: string[]; systemDesign?: string[] };
-    cloudInfrastructure?: { compute?: string[]; devops?: string[]; storage?: string[]; certification?: string };
-    securityCompliance?: { cryptography?: string[]; identity?: string[]; remediation?: string[] };
-    fullStackObservability?: { frontend?: string[]; observability?: string[] };
-  };
+  technicalSkills?:
+    | Record<string, Record<string, string[]>>
+    | {
+        backendArchitecture?: {
+          core?: string[];
+          designPatterns?: string[];
+          systemDesign?: string[];
+        };
+        cloudInfrastructure?: {
+          compute?: string[];
+          devops?: string[];
+          storage?: string[];
+          certification?: string;
+        };
+        securityCompliance?: {
+          cryptography?: string[];
+          identity?: string[];
+          remediation?: string[];
+        };
+        fullStackObservability?: {
+          frontend?: string[];
+          observability?: string[];
+        };
+      };
   coreCompetencies?: string[];
   achievements?: Record<string, string>;
-  currentRole?: { company?: string; position?: string; since?: string; status?: string };
+  currentRole?: {
+    company?: string;
+    position?: string;
+    since?: string;
+    status?: string;
+  };
 };
 
 type ResumeContext = {
@@ -48,12 +71,12 @@ async function readResumeJson(): Promise<ResumeJson> {
   return JSON.parse(file) as ResumeJson;
 }
 
-function joinList(items: Array<string | undefined> | undefined, limit = 12): string {
+function joinList(
+  items: Array<string | undefined> | undefined,
+  limit = 12,
+): string {
   if (!items || items.length === 0) return "";
-  return items
-    .filter(Boolean)
-    .slice(0, limit)
-    .join(", ");
+  return items.filter(Boolean).slice(0, limit).join(", ");
 }
 
 function buildContextText(resume: ResumeJson): string {
@@ -99,7 +122,10 @@ function buildContextText(resume: ResumeJson): string {
     return `${role.position ?? ""} at ${role.company ?? ""} (${role.duration?.start ?? ""} - ${role.duration?.end ?? "Present"}): ${role.description ?? ""}. Key work: ${responsibilities}`;
   });
 
-  const educationLines = education.map((ed) => `${ed.degree ?? ""} in ${ed.major ?? ""} at ${ed.institution ?? ""} (${ed.honors ?? ""})`);
+  const educationLines = education.map(
+    (ed) =>
+      `${ed.degree ?? ""} in ${ed.major ?? ""} at ${ed.institution ?? ""} (${ed.honors ?? ""})`,
+  );
 
   const parts = [
     `Name: ${resume.personalInfo?.fullName ?? "James Florence Conales"}`,
