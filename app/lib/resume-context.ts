@@ -1,4 +1,4 @@
-import resumeData from "@/specs/Resume/resume.json";
+import resumeData from "../../specs/Resume/resume.json";
 
 type ResumeJson = {
   personalInfo?: {

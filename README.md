@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+James Florence Conales — CV / Portfolio Overview
+================================================
 
-## Getting Started
+Bank-grade fintech/security portfolio built with Next.js 16 (App Router), React 19, TypeScript 5, and Tailwind CSS v4. The site functions as an interactive CV: the AI chatbot is grounded in the bundled resume JSON and answers with resume-only facts.
 
-First, run the development server:
+Profile snapshot
+----------------
+- Fintech-specialized backend engineer (PETNET, Inc.).
+- Security-first mindset; strict data handling and prompt redaction in AI flows.
+- Communicates impact concisely; favors measurable outcomes over fluff.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Interactive CV features
+-----------------------
+- AI chatbot: Gemini-backed, seeded with `specs/Resume/resume.json`, greeting shortcut, and prompt hygiene (PII/contact refusals).
+- Design system: Tailwind v4 tokens with light/dark via `prefers-color-scheme`, Stripe/Plaid-style polish.
+- Guided tour hooks: `data-tour` attributes for the product walkthrough.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run locally (for reviewers)
+---------------------------
+- Install deps: `pnpm install`
+- Dev server: `pnpm dev` (http://localhost:3000)
+- Lint: `pnpm lint`
+- Production preview: `pnpm build` then `pnpm start`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Hosting notes
+-------------
+- AI requires a Gemini API key; add it to your hosting provider’s secret store (keep env files out of git).
+- The resume JSON is imported from `specs/Resume/resume.json` at build time; keep it present and case-correct to avoid build failures.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Code map
+--------
+- `app/` — App Router pages and components (e.g., `components/ChatbotWidget.tsx`).
+- `app/api/chat/` — Chatbot API route.
+- `app/lib/` — Persona, resume context, Gemini client.
+- `specs/Resume/resume.json` — Sanitized resume source consumed by the chatbot.
