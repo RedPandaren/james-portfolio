@@ -1,6 +1,7 @@
 import { personalInfo, contactIntents } from "@/app/lib/data";
 import ScrollReveal from "./ScrollReveal";
 import TrackedAnchor from "./TrackedAnchor";
+import ContactForm from "./ContactForm";
 
 export default function Contact() {
   return (
@@ -40,6 +41,11 @@ export default function Contact() {
                 GMT+8
               </span>
             </TrackedAnchor>
+          </div>
+
+          {/* Contact form */}
+          <div className="max-w-2xl mx-auto mb-14 text-left">
+            <ContactForm />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14 text-left">
