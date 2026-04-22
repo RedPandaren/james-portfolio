@@ -9,12 +9,58 @@ type Message = {
   content: string;
 };
 
+type ChatError = {
+  type: "quota" | "network" | "validation" | "server" | "unknown";
+  message: string;
+  canRetry: boolean;
+  retryAfter?: number;
+};
+
 const quickPrompts = [
   "Summarize my fintech experience",
   "Biggest achievements for hiring managers",
   "How do I handle security and compliance?",
   "Recent role impact at PETNET",
 ];
+
+const SENSITIVE_PATTERNS = [/(rate|salary|compensation|pay|bonus|confidential|sensitive)/i];
+const MEETING_SUGGESTION =
+  "That's sensitive information — let's set a meeting to discuss directly. Use the contact form below to schedule a call!";
+
+function classifyError(status: number, errorBody?: { error?: string }): ChatError {
+  if (status === 429) {
+    return {
+      type: "quota",
+      message: "API quota reached. Wait a moment before trying again.",
+      canRetry: true,
+      retryAfter: 60,
+    };
+  }
+  if (status >= 500) {
+    return {
+      type: "server",
+      message: "Server busy. Retrying automatically...",
+      canRetry: true,
+    };
+  }
+  if (status >= 400 && status < 500) {
+    return {
+      type: "validation",
+      message: errorBody?.error ?? `Request failed (${status})`,
+      canRetry: false,
+    };
+  }
+  return {
+    type: "unknown",
+    message: "Something went wrong. Please try again.",
+    canRetry: true,
+  };
+}
+
+function checkSensitiveTopic(text: string): boolean {
+  const lower = text.toLowerCase();
+  return SENSITIVE_PATTERNS.some((p) => p.test(lower));
+}
 
 function createId() {
   return typeof crypto !== "undefined" && crypto.randomUUID
@@ -34,6 +80,8 @@ export default function ChatbotWidget() {
   const [seededIntro, setSeededIntro] = useState(false);
   const [cooldownUntil, setCooldownUntil] = useState<number>(0);
   const [nowTs, setNowTs] = useState<number>(() => Date.now());
+  const [quotaExceededUntil, setQuotaExceededUntil] = useState<number>(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -57,8 +105,11 @@ export default function ChatbotWidget() {
   }, []);
 
   const cooldownRemainingMs = Math.max(0, cooldownUntil - nowTs);
+  const quotaRemainingMs = Math.max(0, quotaExceededUntil - nowTs);
   const coolingDown = cooldownRemainingMs > 0;
-  const canSend = input.trim().length > 0 && !isSending && !coolingDown;
+  const quotaExceeded = quotaRemainingMs > 0;
+  const isDisabled = isSending || coolingDown || quotaExceeded || isRetrying;
+  const canSend = input.trim().length > 0 && !isDisabled;
 
   useEffect(() => {
     if (isOpen && !seededIntro && messages.length === 0) {
@@ -74,9 +125,17 @@ export default function ChatbotWidget() {
 
   async function sendMessage(text?: string) {
     const userContent = (text ?? input).trim();
-    if (!userContent || isSending) return;
-    if (coolingDown) {
-      setError(`Please wait ${Math.ceil(cooldownRemainingMs / 1000)}s before sending again.`);
+    if (!userContent || isSending || isRetrying) return;
+    if (coolingDown || quotaExceeded) {
+      setError(`Please wait ${Math.ceil(Math.max(cooldownRemainingMs, quotaRemainingMs) / 1000)}s before trying again.`);
+      return;
+    }
+
+    if (checkSensitiveTopic(userContent)) {
+      setMessages((prev) => [
+        ...prev,
+        { id: createId(), role: "assistant", content: MEETING_SUGGESTION },
+      ]);
       return;
     }
 
@@ -88,40 +147,66 @@ export default function ChatbotWidget() {
     setError(null);
     setCooldownUntil(Date.now() + 3000);
 
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userContent,
-          history: pendingMessages.map((m) => ({ role: m.role, content: m.content })),
-        }),
-      });
+    let lastError: ChatError | null = null;
+    const maxRetries = 2;
+    const baseDelay = 2000;
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Request failed (${res.status})`);
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userContent,
+            history: pendingMessages.map((m) => ({ role: m.role, content: m.content })),
+          }),
+        });
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          const error = classifyError(res.status, body);
+
+          if (error.type === "quota" && attempt < maxRetries) {
+            setQuotaExceededUntil(Date.now() + (error.retryAfter ?? 60) * 1000);
+            continue;
+          }
+
+          if (error.canRetry && attempt < maxRetries && attempt < maxRetries - 1) {
+            lastError = error;
+            setIsRetrying(true);
+            await new Promise((r) => setTimeout(r, baseDelay * Math.pow(2, attempt)));
+            setIsRetrying(false);
+            continue;
+          }
+
+          throw new Error(error.message);
+        }
+
+        const data = (await res.json()) as {
+          answer: string;
+          usedModel?: string;
+          fromCache?: boolean;
+        };
+
+        setMessages((prev) => [
+          ...prev,
+          { id: createId(), role: "assistant", content: data.answer },
+        ]);
+        if (data.usedModel) setLastModel(data.usedModel);
+        setFromCache(Boolean(data.fromCache));
+        return;
+      } catch (err) {
+        lastError = classifyError(0);
+        if (attempt >= maxRetries) {
+          console.error(err);
+          setError(lastError.message);
+          setMessages((prev) => prev.slice(0, -1));
+        }
       }
-
-      const data = (await res.json()) as {
-        answer: string;
-        usedModel?: string;
-        fromCache?: boolean;
-      };
-
-      setMessages((prev) => [
-        ...prev,
-        { id: createId(), role: "assistant", content: data.answer },
-      ]);
-      if (data.usedModel) setLastModel(data.usedModel);
-      setFromCache(Boolean(data.fromCache));
-    } catch (err) {
-      console.error(err);
-      setError((err as Error).message || "Something went wrong");
-      setMessages((prev) => prev.slice(0, -1));
-    } finally {
-      setIsSending(false);
     }
+
+    setIsSending(false);
+    setIsRetrying(false);
   }
 
   async function copyLastAnswer() {
@@ -186,7 +271,7 @@ export default function ChatbotWidget() {
                 type="button"
                 onClick={() => sendMessage(prompt)}
                 className="rounded-full border border-[var(--sem-border-subtle)] px-3 py-1 text-xs text-[var(--sem-text-secondary)] transition-colors hover:border-[var(--sem-primary)] hover:text-[var(--sem-primary)] disabled:opacity-60"
-                disabled={isSending || coolingDown}
+                disabled={isDisabled}
               >
                 {prompt}
               </button>
@@ -216,7 +301,7 @@ export default function ChatbotWidget() {
                 {isSending ? (
                   <div className="flex justify-start">
                     <div className="rounded-2xl bg-[var(--sem-surface-secondary)] px-3 py-2 text-[var(--sem-text-muted)]">
-                      Thinking…
+                      {isRetrying ? "Retrying..." : "Thinking…"}
                     </div>
                   </div>
                 ) : null}
