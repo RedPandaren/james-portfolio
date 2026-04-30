@@ -37,6 +37,8 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
+              title={link.label === "Contact" ? "Jump to the sample workflow automation contact section" : undefined}
+              aria-label={link.label === "Contact" ? "Contact - jump to the sample workflow automation section" : undefined}
               className="text-sm text-text-secondary hover:text-primary transition-colors"
             >
               {link.label}
@@ -116,6 +118,8 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={closeMobileMenu}
+                title={link.label === "Contact" ? "Jump to the sample workflow automation contact section" : undefined}
+                aria-label={link.label === "Contact" ? "Contact - jump to the sample workflow automation section" : undefined}
                 className="text-sm text-text-secondary hover:text-primary transition-colors py-2"
               >
                 {link.label}
