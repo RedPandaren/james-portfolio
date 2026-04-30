@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -6,6 +7,7 @@ const requestSchema = z.object({
   email: z.string().email(),
   intent: z.enum(["hiring", "talk"]),
   message: z.string().trim().min(1).max(1000),
+  company: z.string().max(200).optional().default(""),
 });
 
 const IN_MEMORY_RATE_LIMIT = new Map<string, { count: number; resetAt: number }>();
@@ -29,23 +31,73 @@ function sanitizeInput(input: string): string {
     .trim();
 }
 
-async function sendToDiscord(payload: {
+type AutomationPayload = {
   name: string;
   email: string;
-  intent: string;
+  intent: "hiring" | "talk";
   message: string;
-}) {
+  source: "portfolio-contact-form";
+  submittedAt: string;
+  userAgent?: string;
+  ipHash?: string;
+};
+
+type DiscordPayload = Pick<AutomationPayload, "name" | "email" | "intent" | "message">;
+
+function hashIp(ip: string): string | undefined {
+  if (!ip || ip === "unknown") {
+    return undefined;
+  }
+
+  return createHash("sha256").update(ip).digest("hex");
+}
+
+async function sendToAutomation(payload: AutomationPayload) {
+  const webhookUrl = process.env.AUTOMATION_WEBHOOK_URL;
+  const webhookSecret = process.env.AUTOMATION_WEBHOOK_SECRET;
+
+  if (!webhookUrl) {
+    console.error("[contact] AUTOMATION_WEBHOOK_URL not configured");
+    throw new Error("Webhook not configured");
+  }
+
+  if (!webhookSecret) {
+    console.error("[contact] AUTOMATION_WEBHOOK_SECRET not configured");
+    throw new Error("Webhook secret not configured");
+  }
+
+  const timeoutMs = Number(process.env.AUTOMATION_TIMEOUT_MS ?? 8000);
+
+  const res = await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-automation-secret": webhookSecret,
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(Number.isFinite(timeoutMs) ? timeoutMs : 8000),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.error("[contact] Automation webhook failed:", res.status, text);
+    throw new Error("Failed to trigger automation");
+  }
+}
+
+async function sendToDiscord(payload: DiscordPayload) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
   if (!webhookUrl) {
     console.error("[contact] DISCORD_WEBHOOK_URL not configured");
-    throw new Error("Webhook not configured");
+    throw new Error("Discord webhook not configured");
   }
 
   const intentLabel = payload.intent === "hiring" ? "Hiring Inquiry" : "Talk Request";
   const embed = {
     embeds: [
       {
-        title: `📬 New Lead - ${intentLabel}`,
+        title: `New Lead - ${intentLabel}`,
         color: 5814783,
         fields: [
           {
@@ -122,16 +174,27 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, intent, message } = parsed.data;
+    const { name, email, intent, message, company } = parsed.data;
+
+    if (company.trim() !== "") {
+      return NextResponse.json({ success: true });
+    }
 
     const sanitized = {
       name: sanitizeInput(name),
       email: sanitizeInput(email),
       intent,
       message: sanitizeInput(message),
+      source: "portfolio-contact-form" as const,
+      submittedAt: new Date().toISOString(),
+      userAgent: req.headers.get("user-agent") ?? undefined,
+      ipHash: hashIp(clientIp),
     };
 
-    await sendToDiscord(sanitized);
+    await Promise.all([
+      sendToAutomation(sanitized),
+      sendToDiscord(sanitized),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -7,6 +7,7 @@ type FormData = {
   email: string;
   intent: "hiring" | "talk";
   message: string;
+  company: string;
 };
 
 type FormStatus = "idle" | "loading" | "success" | "error";
@@ -16,6 +17,7 @@ const initialForm: FormData = {
   email: "",
   intent: "hiring",
   message: "",
+  company: "",
 };
 
 export default function ContactForm() {
@@ -75,8 +77,19 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--sem-border)] p-5">
       <p className="text-xs text-[var(--sem-text-muted)] mb-4">
-        Sends to Discord as a workflow automation
+        Sample workflow automation using Discord webhook notifications and a Zapier-managed response email thread.
       </p>
+      <input
+        type="text"
+        name="company"
+        value={formData.company}
+        onChange={(e) => handleChange("company", e.target.value)}
+        autoComplete="organization"
+        tabIndex={-1}
+        disabled={status === "loading"}
+        className="hidden"
+        aria-hidden="true"
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <input
           type="text"

@@ -13,9 +13,13 @@ export default function Contact() {
             Let&apos;s Connect
           </h2>
 
-          <p className="text-text-secondary max-w-2xl mx-auto mb-10">
+          <p className="text-text-secondary max-w-2xl mx-auto mb-4">
             Choose the fastest path based on your goal. I respond with role-fit context,
             architecture rationale, and next-step options.
+          </p>
+
+          <p className="text-xs uppercase tracking-[0.2em] text-text-muted max-w-3xl mx-auto mb-10">
+            Sample workflow automation: Discord webhook notifications + Zapier-routed response email thread.
           </p>
 
           {/* Quick actions */}
